@@ -1,0 +1,972 @@
+<!doctype html>
+
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>COMPLEX — Keamanan | Dashboard Warga</title>
+
+    <meta
+      name="description"
+      content="Dashboard COMPLEX — kelola iuran, pantau keamanan, akses SIGAP, dan ikuti acara komunitas warga kompleks."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght\@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <link rel="stylesheet" href="css/keamanan.css" />
+  </head>
+
+  <body class="dashboard-body security-page">
+    <!-- ======================================================
+
+       HALAMAN BERANDA / DASHBOARD
+
+  ======================================================= -->
+
+    <!-- ===== SIDEBAR ===== -->
+
+    <aside
+      class="sidebar"
+      id="sidebar"
+      role="navigation"
+      aria-label="Menu utama"
+    >
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon" aria-hidden="true">
+          <img
+            class="sidebar-logo-image"
+            src="assets/complex-houselogo.png"
+            alt=""
+            width="34"
+            height="25"
+          />
+        </div>
+
+        <span class="sidebar-logo-text"
+          ><span class="sidebar-logo-main">Comple</span
+          ><span class="sidebar-logo-accent">X</span></span
+        >
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="beranda.html" class="sidebar-nav-item" id="nav-beranda">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+
+          Beranda
+        </a>
+
+        <a
+          href="keamanan.html"
+          class="sidebar-nav-item active"
+          id="nav-keamanan"
+          aria-current="page"
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+
+          Keamanan
+        </a>
+
+        <a
+          href="sigap.html"
+          class="sidebar-nav-item sigap-nav-item"
+          id="nav-sigap"
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+            />
+
+            <line x1="12" y1="9" x2="12" y2="13" />
+
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+
+          SIGAP
+        </a>
+
+        <a href="komunitas.html" class="sidebar-nav-item" id="nav-komunitas">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+
+            <circle cx="9" cy="7" r="4" />
+
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+
+          Komunitas
+        </a>
+
+        <a
+          href="#"
+          class="sidebar-nav-item"
+          id="nav-lapor"
+          onclick="
+            showPlaceholder('Lapor');
+
+            return false;
+          "
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            />
+
+            <polyline points="14 2 14 8 20 8" />
+
+            <line x1="16" y1="13" x2="8" y2="13" />
+
+            <line x1="16" y1="17" x2="8" y2="17" />
+
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+
+          Lapor
+        </a>
+
+        <a
+          href="#"
+          class="sidebar-nav-item"
+          id="nav-kebersihan"
+          onclick="
+            showPlaceholder('Kebersihan');
+
+            return false;
+          "
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="3 6 5 6 21 6" />
+
+            <path
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"
+            />
+          </svg>
+
+          Kebersihan
+        </a>
+
+        <a
+          href="#"
+          class="sidebar-nav-item"
+          id="nav-fasilitas"
+          onclick="
+            showPlaceholder('Fasilitas');
+
+            return false;
+          "
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="3" width="7" height="7" />
+
+            <rect x="14" y="3" width="7" height="7" />
+
+            <rect x="14" y="14" width="7" height="7" />
+
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+
+          Fasilitas
+        </a>
+
+        <a
+          href="#"
+          class="sidebar-nav-item"
+          id="nav-notifikasi"
+          onclick="
+            showPlaceholder('Notifikasi');
+
+            return false;
+          "
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+
+          Notifikasi
+        </a>
+
+        <a href="profil.html" class="sidebar-nav-item" id="nav-profil">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+
+          Profil
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a
+          href="index.html"
+          class="sidebar-nav-item sidebar-logout"
+          id="nav-logout"
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+
+            <polyline points="16 17 21 12 16 7" />
+
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+
+          Logout
+        </a>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+
+    <div class="dashboard-main">
+      <!-- ===== TOPBAR / HEADER ===== -->
+
+      <header class="topbar" role="banner">
+        <div class="topbar-search">
+          <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+
+          <input
+            type="search"
+            class="topbar-search-input"
+            placeholder="Mau cari fitur apa?"
+            id="searchInput"
+            aria-label="Cari fitur"
+          />
+        </div>
+
+        <div class="topbar-actions">
+          <button
+            class="topbar-action-btn"
+            id="btnMsg"
+            aria-label="Pesan"
+            onclick="showPlaceholder('Pesan')"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+
+              <polyline points="2,4 12,13 22,4" />
+            </svg>
+          </button>
+
+          <button
+            class="topbar-action-btn"
+            id="btnNotif"
+            aria-label="Notifikasi"
+            onclick="showPlaceholder('Notifikasi')"
+          >
+            <span class="notif-dot"></span>
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+          </button>
+
+          <button
+            class="topbar-action-btn"
+            id="btnSettings"
+            aria-label="Pengaturan"
+            onclick="showPlaceholder('Pengaturan')"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="3" />
+
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+              />
+            </svg>
+          </button>
+
+          <a
+            href="profil.html"
+            class="topbar-avatar"
+            id="btnAvatar"
+            aria-label="Buka profil pengguna"
+          >
+            <div class="avatar-circle">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+
+            <span class="topbar-username" id="topbarUsername">Pengguna</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- ===== CONTENT AREA ===== -->
+
+      <main class="dashboard-content security-content" role="main">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="beranda.html" class="breadcrumb-link">Beranda</a>
+
+          <span class="breadcrumb-sep">/</span>
+
+          <span aria-current="page">Keamanan</span>
+        </nav>
+
+        <section
+          class="security-page-heading"
+          aria-labelledby="securityPageTitle"
+        >
+          <div>
+            <p class="security-eyebrow">
+              <span class="security-eyebrow-dot"></span> PUSAT INFORMASI
+              LINGKUNGAN
+            </p>
+
+            <h1 id="securityPageTitle">Keamanan</h1>
+
+            <p class="security-page-description">
+              Pantau laporan keamanan dan hubungi petugas yang sedang berjaga di
+              lingkungan COMPLEX.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="security-button security-button-secondary"
+            id="btnOpenReportForm"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+
+            Laporkan Kejadian
+          </button>
+        </section>
+
+        <div class="security-layout">
+          <section
+            class="security-panel security-reports-panel"
+            aria-labelledby="securityReportsTitle"
+          >
+            <div class="security-panel-heading">
+              <div>
+                <h2 id="securityReportsTitle">Laporan Keamanan</h2>
+
+                <p>Informasi kejadian dan tindak lanjut petugas.</p>
+              </div>
+
+              <span class="security-total-pill" id="reportTotal"
+                >5 laporan</span
+              >
+            </div>
+
+            <div class="security-report-tools">
+              <label class="security-report-search" for="reportSearch">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7.5" />
+
+                  <path d="m16.5 16.5 4 4" />
+                </svg>
+
+                <input
+                  type="search"
+                  id="reportSearch"
+                  placeholder="Cari laporan keamanan..."
+                  autocomplete="off"
+                />
+              </label>
+
+              <div
+                class="security-filter-group"
+                role="group"
+                aria-label="Filter status laporan"
+              >
+                <button
+                  type="button"
+                  class="security-filter active"
+                  data-status="Semua"
+                  aria-pressed="true"
+                >
+                  Semua
+                </button>
+
+                <button
+                  type="button"
+                  class="security-filter"
+                  data-status="Baru"
+                  aria-pressed="false"
+                >
+                  Baru
+                </button>
+
+                <button
+                  type="button"
+                  class="security-filter"
+                  data-status="Ditangani"
+                  aria-pressed="false"
+                >
+                  Ditangani
+                </button>
+
+                <button
+                  type="button"
+                  class="security-filter"
+                  data-status="Selesai"
+                  aria-pressed="false"
+                >
+                  Selesai
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="security-report-list"
+              id="securityReportList"
+              aria-live="polite"
+            ></div>
+
+            <div class="security-empty-state" id="securityEmptyState" hidden>
+              <span class="security-empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="7.5" />
+
+                  <path d="m16.5 16.5 4 4" />
+                </svg>
+              </span>
+
+              <strong>Laporan tidak ditemukan</strong>
+
+              <p>Coba ubah kata kunci atau filter status yang dipilih.</p>
+            </div>
+
+            <p class="security-data-note">
+              Data contoh mengikuti wireframe. Laporan baru yang kamu tambahkan
+              tersimpan di browser ini.
+            </p>
+          </section>
+
+          <aside
+            class="security-side-column"
+            aria-label="Bantuan dan kontak keamanan"
+          >
+            <section
+              class="security-emergency-card"
+              aria-labelledby="securityEmergencyTitle"
+            >
+              <div class="security-emergency-glow" aria-hidden="true"></div>
+
+              <div class="security-emergency-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 3 2.8 19a1.6 1.6 0 0 0 1.4 2.4h15.6a1.6 1.6 0 0 0 1.4-2.4L12 3Z"
+                  />
+
+                  <path d="M12 9v5m0 3h.01" />
+                </svg>
+              </div>
+
+              <p class="security-emergency-label">LAYANAN DARURAT</p>
+
+              <h2 id="securityEmergencyTitle">Butuh bantuan segera?</h2>
+
+              <p>
+                Hubungi petugas keamanan melalui SIGAP apabila terjadi keadaan
+                darurat yang membutuhkan respons cepat.
+              </p>
+
+              <a href="sigap.html" class="security-sigap-button">
+                <span>SIGAP</span>
+
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12h14m-6-6 6 6-6 6" />
+                </svg>
+              </a>
+
+              <span class="security-emergency-footnote"
+                >Gunakan fitur ini untuk keadaan darurat.</span
+              >
+            </section>
+
+            <section
+              class="security-panel security-guard-panel"
+              aria-labelledby="securityGuardTitle"
+            >
+              <div class="security-panel-heading security-guard-heading">
+                <div>
+                  <h2 id="securityGuardTitle">Kontak Petugas Keamanan</h2>
+
+                  <p>Dua petugas yang bertugas secara bergantian.</p>
+                </div>
+
+                <button
+                  type="button"
+                  class="security-icon-button"
+                  id="btnManageGuards"
+                  aria-label="Atur data petugas"
+                  title="Atur data petugas"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+
+                    <path
+                      d="m19.4 15 .1.1a1.8 1.8 0 0 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3 .9v.2a1.8 1.8 0 0 1-3.6 0v-.2a1.8 1.8 0 0 0-3-.9l-.1.1a1.8 1.8 0 0 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-.9-3H3.7a1.8 1.8 0 0 1 0-3.6h.2a1.8 1.8 0 0 0 .9-3l-.1-.1a1.8 1.8 0 0 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3-.9v-.2a1.8 1.8 0 0 1 3.6 0v.2a1.8 1.8 0 0 0 3 .9l.1-.1a1.8 1.8 0 0 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 .9 3h.2a1.8 1.8 0 0 1 0 3.6h-.2a1.8 1.8 0 0 0-.9 3Z"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="security-duty-summary">
+                <div class="security-duty-topline">
+                  <span class="security-duty-live-dot"></span>
+
+                  <span id="dutyLabel">JADWAL CONTOH</span>
+                </div>
+
+                <div class="security-duty-current">
+                  <div>
+                    <span class="security-meta-label">SEDANG BERTUGAS</span>
+
+                    <strong id="currentGuardName">Petugas Keamanan 1</strong>
+
+                    <span class="security-duty-time" id="currentShiftRange"
+                      >07.00–19.00 WIB</span
+                    >
+                  </div>
+
+                  <span class="security-on-duty-badge" id="currentDutyBadge"
+                    >Contoh</span
+                  >
+                </div>
+
+                <div class="security-duty-next">
+                  <span class="security-meta-label">GILIRAN BERIKUTNYA</span>
+
+                  <strong id="nextGuardName">Petugas Keamanan 2</strong>
+
+                  <span id="nextShiftInfo">Mulai pukul 19.00 WIB</span>
+                </div>
+              </div>
+
+              <div class="security-guard-list" id="securityGuardList">
+                <article class="security-guard-card">
+                  <div class="security-guard-avatar">1</div>
+
+                  <div class="security-guard-info">
+                    <strong>Petugas Keamanan 1</strong
+                    ><span>Nomor belum diatur</span>
+                  </div>
+                </article>
+
+                <article class="security-guard-card">
+                  <div class="security-guard-avatar security-guard-avatar-alt">
+                    2
+                  </div>
+
+                  <div class="security-guard-info">
+                    <strong>Petugas Keamanan 2</strong
+                    ><span>Nomor belum diatur</span>
+                  </div>
+                </article>
+              </div>
+
+              <p class="security-contact-note">
+                Nama, nomor telepon, dan jam pergantian shift dapat diatur
+                melalui ikon pengaturan. Jadwal awal merupakan contoh dan perlu
+                disesuaikan dengan jadwal kompleks.
+              </p>
+            </section>
+          </aside>
+        </div>
+      </main>
+    </div>
+
+    <div
+      class="security-toast"
+      id="securityToast"
+      role="status"
+      aria-live="polite"
+    ></div>
+
+    <div class="security-modal-overlay" id="reportDetailModal" hidden>
+      <section
+        class="security-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="detailModalTitle"
+      >
+        <button
+          type="button"
+          class="security-modal-close"
+          data-close-modal
+          aria-label="Tutup"
+        >
+          ×
+        </button>
+
+        <p class="security-modal-eyebrow">DETAIL LAPORAN</p>
+
+        <h2 id="detailModalTitle">Detail laporan</h2>
+
+        <div class="security-detail-meta">
+          <span id="detailReportDate">—</span>
+
+          <span id="detailReportStatus" class="security-status-badge">—</span>
+        </div>
+
+        <div class="security-detail-field">
+          <span>Lokasi</span><strong id="detailReportLocation">—</strong>
+        </div>
+
+        <div class="security-detail-field">
+          <span>Keterangan</span>
+
+          <p id="detailReportDescription">—</p>
+        </div>
+
+        <button
+          type="button"
+          class="security-button security-button-primary security-modal-action"
+          data-close-modal
+        >
+          Tutup
+        </button>
+      </section>
+    </div>
+
+    <div class="security-modal-overlay" id="reportFormModal" hidden>
+      <section
+        class="security-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reportFormTitle"
+      >
+        <button
+          type="button"
+          class="security-modal-close"
+          data-close-modal
+          aria-label="Tutup"
+        >
+          ×
+        </button>
+
+        <p class="security-modal-eyebrow">LAPORAN WARGA</p>
+
+        <h2 id="reportFormTitle">Laporkan kejadian</h2>
+
+        <p class="security-modal-description">
+          Isi informasi kejadian dengan jelas agar petugas lebih mudah
+          menindaklanjuti.
+        </p>
+
+        <form id="securityReportForm" class="security-form">
+          <label class="security-form-field"
+            >Judul kejadian
+
+            <input
+              type="text"
+              id="newReportTitle"
+              maxlength="90"
+              placeholder="Contoh: Orang tidak dikenal di sekitar rumah"
+              required
+            />
+          </label>
+
+          <label class="security-form-field"
+            >Lokasi kejadian
+
+            <input
+              type="text"
+              id="newReportLocation"
+              maxlength="80"
+              placeholder="Contoh: Blok B / dekat gerbang utama"
+              required
+            />
+          </label>
+
+          <label class="security-form-field"
+            >Keterangan
+
+            <textarea
+              id="newReportDescription"
+              rows="4"
+              maxlength="600"
+              placeholder="Jelaskan kejadian, waktu, dan informasi penting lainnya..."
+              required
+            ></textarea>
+          </label>
+
+          <div class="security-form-actions">
+            <button
+              type="button"
+              class="security-button security-button-secondary"
+              data-close-modal
+            >
+              Batal
+            </button>
+
+            <button
+              type="submit"
+              class="security-button security-button-primary"
+            >
+              Kirim Laporan
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="security-modal-overlay" id="guardSettingsModal" hidden>
+      <section
+        class="security-modal security-modal-wide"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="guardSettingsTitle"
+      >
+        <button
+          type="button"
+          class="security-modal-close"
+          data-close-modal
+          aria-label="Tutup"
+        >
+          ×
+        </button>
+
+        <p class="security-modal-eyebrow">PENGATURAN KEAMANAN</p>
+
+        <h2 id="guardSettingsTitle">Atur petugas dan jadwal shift</h2>
+
+        <p class="security-modal-description">
+          Masukkan nama dan nomor yang benar. Sistem menggunakan dua shift
+          bergantian selama 12 jam, dimulai dari jam shift pertama.
+        </p>
+
+        <form id="guardSettingsForm" class="security-form">
+          <div class="security-form-grid">
+            <div class="security-form-section">
+              <h3>Petugas pertama</h3>
+
+              <label class="security-form-field"
+                >Nama petugas
+
+                <input
+                  type="text"
+                  id="guardOneName"
+                  maxlength="60"
+                  placeholder="Nama petugas pertama"
+                  required
+                />
+              </label>
+
+              <label class="security-form-field"
+                >Nomor telepon / WhatsApp
+
+                <input
+                  type="tel"
+                  id="guardOnePhone"
+                  maxlength="24"
+                  inputmode="tel"
+                  placeholder="08xxxxxxxxxx"
+                />
+              </label>
+            </div>
+
+            <div class="security-form-section">
+              <h3>Petugas kedua</h3>
+
+              <label class="security-form-field"
+                >Nama petugas
+
+                <input
+                  type="text"
+                  id="guardTwoName"
+                  maxlength="60"
+                  placeholder="Nama petugas kedua"
+                  required
+                />
+              </label>
+
+              <label class="security-form-field"
+                >Nomor telepon / WhatsApp
+
+                <input
+                  type="tel"
+                  id="guardTwoPhone"
+                  maxlength="24"
+                  inputmode="tel"
+                  placeholder="08xxxxxxxxxx"
+                />
+              </label>
+            </div>
+          </div>
+
+          <label class="security-form-field security-shift-start-field"
+            >Jam mulai shift petugas pertama
+
+            <input type="time" id="guardShiftStart" value="07:00" required />
+
+            <small
+              >Shift kedua otomatis dimulai 12 jam setelahnya. Contoh:
+              07.00–19.00 dan 19.00–07.00.</small
+            >
+          </label>
+
+          <div class="security-form-actions">
+            <button
+              type="button"
+              class="security-button security-button-secondary"
+              data-close-modal
+            >
+              Batal
+            </button>
+
+            <button
+              type="submit"
+              class="security-button security-button-primary"
+            >
+              Simpan Pengaturan
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <script src="js/keamanan.js" defer></script>
+
+    <script src="js/navigation.js"></script>
+  </body>
+</html>

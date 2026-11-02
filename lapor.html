@@ -1,0 +1,1414 @@
+<!doctype html>
+
+
+
+<html lang="id">
+
+  <head>
+
+    <meta charset="UTF-8" />
+
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+
+
+    <title>COMPLEX — Lapor | Dashboard Warga</title>
+
+
+
+    <meta
+
+      name="description"
+
+      content="Dashboard COMPLEX — kelola iuran, pantau keamanan, akses SIGAP, dan ikuti acara komunitas warga kompleks."
+
+    />
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+
+
+    <link
+
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+
+      rel="stylesheet"
+
+    />
+
+
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/lapor.css" />
+
+  </head>
+
+
+
+  <body class="dashboard-body lapor-page">
+
+    <!-- ======================================================
+
+
+
+       HALAMAN LAPOR
+
+
+
+  ======================================================= -->
+
+
+
+    <!-- ===== SIDEBAR ===== -->
+
+
+
+    <aside
+
+      class="sidebar"
+
+      id="sidebar"
+
+      role="navigation"
+
+      aria-label="Menu utama"
+
+    >
+
+      <div class="sidebar-logo">
+
+        <div class="sidebar-logo-icon" aria-hidden="true">
+
+          <img
+
+            class="sidebar-logo-image"
+
+            src="assets/complex-houselogo.png"
+
+            alt=""
+
+            width="34"
+
+            height="25"
+
+          />
+
+        </div>
+
+
+
+        <span class="sidebar-logo-text"
+
+          ><span class="sidebar-logo-main">Comple</span
+
+          ><span class="sidebar-logo-accent">X</span></span
+
+        >
+
+      </div>
+
+
+
+      <nav class="sidebar-nav">
+
+        <a
+
+          href="beranda.html"
+
+          class="sidebar-nav-item"
+
+          id="nav-beranda"
+
+        >
+
+          <svg
+
+            class="nav-icon"
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+          >
+
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+
+
+
+            <polyline points="9 22 9 12 15 12 15 22" />
+
+          </svg>
+
+
+
+          Beranda
+
+        </a>
+
+
+
+        <a href="keamanan.html" class="sidebar-nav-item" id="nav-keamanan">
+
+          <svg
+
+            class="nav-icon"
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+          >
+
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+
+          </svg>
+
+
+
+          Keamanan
+
+        </a>
+
+
+
+        <a
+
+          href="sigap.html"
+
+          class="sidebar-nav-item sigap-nav-item"
+
+          id="nav-sigap"
+
+        >
+
+          <svg
+
+            class="nav-icon"
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+          >
+
+            <path
+
+              d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+
+            />
+
+
+
+            <line x1="12" y1="9" x2="12" y2="13" />
+
+
+
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+
+          </svg>
+
+
+
+          SIGAP
+
+        </a>
+
+
+
+        <a href="komunitas.html" class="sidebar-nav-item" id="nav-komunitas">
+
+          <svg
+
+            class="nav-icon"
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+          >
+
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+
+
+
+            <circle cx="9" cy="7" r="4" />
+
+
+
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+
+
+
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+
+          </svg>
+
+
+
+          Komunitas
+
+        </a>
+
+
+
+        <a
+
+          href="lapor.html"
+
+          class="sidebar-nav-item active"
+
+          id="nav-lapor"
+          aria-current="page"
+
+        >
+
+          <svg
+
+            class="nav-icon"
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+          >
+
+            <path
+
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+
+            />
+
+
+
+            <polyline points="14 2 14 8 20 8" />
+
+
+
+            <line x1="16" y1="13" x2="8" y2="13" />
+
+
+
+            <line x1="16" y1="17" x2="8" y2="17" />
+
+
+
+            <polyline points="10 9 9 9 8 9" />
+
+          </svg>
+
+
+
+          Lapor
+
+        </a>
+
+
+
+        <a
+
+          href="#"
+
+          class="sidebar-nav-item"
+
+          id="nav-kebersihan"
+
+          onclick="
+
+            showPlaceholder('Kebersihan');
+
+
+
+            return false;
+
+          "
+
+        >
+
+          <svg
+
+            class="nav-icon"
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+          >
+
+            <polyline points="3 6 5 6 21 6" />
+
+
+
+            <path
+
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"
+
+            />
+
+          </svg>
+
+
+
+          Kebersihan
+
+        </a>
+
+
+
+        <a
+
+          href="#"
+
+          class="sidebar-nav-item"
+
+          id="nav-fasilitas"
+
+          onclick="
+
+            showPlaceholder('Fasilitas');
+
+
+
+            return false;
+
+          "
+
+        >
+
+          <svg
+
+            class="nav-icon"
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+          >
+
+            <rect x="3" y="3" width="7" height="7" />
+
+
+
+            <rect x="14" y="3" width="7" height="7" />
+
+
+
+            <rect x="14" y="14" width="7" height="7" />
+
+
+
+            <rect x="3" y="14" width="7" height="7" />
+
+          </svg>
+
+
+
+          Fasilitas
+
+        </a>
+
+
+
+        <a
+
+          href="#"
+
+          class="sidebar-nav-item"
+
+          id="nav-notifikasi"
+
+          onclick="
+
+            showPlaceholder('Notifikasi');
+
+
+
+            return false;
+
+          "
+
+        >
+
+          <svg
+
+            class="nav-icon"
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+          >
+
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+
+
+
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+
+          </svg>
+
+
+
+          Notifikasi
+
+        </a>
+
+
+
+        <a href="profil.html" class="sidebar-nav-item" id="nav-profil">
+
+          <svg
+
+            class="nav-icon"
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+          >
+
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+
+
+
+            <circle cx="12" cy="7" r="4" />
+
+          </svg>
+
+
+
+          Profil
+
+        </a>
+
+      </nav>
+
+
+
+      <div class="sidebar-footer">
+
+        <a
+
+          href="index.html"
+
+          class="sidebar-nav-item sidebar-logout"
+
+          id="nav-logout"
+
+        >
+
+          <svg
+
+            class="nav-icon"
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+          >
+
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+
+
+
+            <polyline points="16 17 21 12 16 7" />
+
+
+
+            <line x1="21" y1="12" x2="9" y2="12" />
+
+          </svg>
+
+
+
+          Logout
+
+        </a>
+
+      </div>
+
+    </aside>
+
+
+
+    <!-- ===== MAIN CONTENT ===== -->
+
+
+
+    <div class="dashboard-main">
+
+      <!-- ===== TOPBAR / HEADER ===== -->
+
+
+
+      <header class="topbar" role="banner">
+
+        <div class="topbar-search">
+
+          <svg
+
+            class="search-icon"
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="currentColor"
+
+            stroke-width="2"
+
+            stroke-linecap="round"
+
+            stroke-linejoin="round"
+
+          >
+
+            <circle cx="11" cy="11" r="8" />
+
+
+
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+
+          </svg>
+
+
+
+          <input
+
+            type="search"
+
+            class="topbar-search-input"
+
+            placeholder="Mau cari fitur apa?"
+
+            id="searchInput"
+
+            aria-label="Cari fitur"
+
+          />
+
+        </div>
+
+
+
+        <div class="topbar-actions">
+
+          <button
+
+            class="topbar-action-btn"
+
+            id="btnMsg"
+
+            aria-label="Pesan"
+
+            onclick="showPlaceholder('Pesan')"
+
+          >
+
+            <svg
+
+              viewBox="0 0 24 24"
+
+              fill="none"
+
+              stroke="currentColor"
+
+              stroke-width="2"
+
+              stroke-linecap="round"
+
+              stroke-linejoin="round"
+
+            >
+
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+
+
+
+              <polyline points="2,4 12,13 22,4" />
+
+            </svg>
+
+          </button>
+
+
+
+          <button
+
+            class="topbar-action-btn"
+
+            id="btnNotif"
+
+            aria-label="Notifikasi"
+
+            onclick="showPlaceholder('Notifikasi')"
+
+          >
+
+            <span class="notif-dot"></span>
+
+
+
+            <svg
+
+              viewBox="0 0 24 24"
+
+              fill="none"
+
+              stroke="currentColor"
+
+              stroke-width="2"
+
+              stroke-linecap="round"
+
+              stroke-linejoin="round"
+
+            >
+
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+
+
+
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+
+            </svg>
+
+          </button>
+
+
+
+          <button
+
+            class="topbar-action-btn"
+
+            id="btnSettings"
+
+            aria-label="Pengaturan"
+
+            onclick="showPlaceholder('Pengaturan')"
+
+          >
+
+            <svg
+
+              viewBox="0 0 24 24"
+
+              fill="none"
+
+              stroke="currentColor"
+
+              stroke-width="2"
+
+              stroke-linecap="round"
+
+              stroke-linejoin="round"
+
+            >
+
+              <circle cx="12" cy="12" r="3" />
+
+
+
+              <path
+
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+
+              />
+
+            </svg>
+
+          </button>
+
+
+
+          <a
+
+            href="profil.html"
+
+            class="topbar-avatar"
+
+            id="btnAvatar"
+
+            aria-label="Buka profil pengguna"
+
+          >
+
+            <div class="avatar-circle">
+
+              <svg
+
+                viewBox="0 0 24 24"
+
+                fill="none"
+
+                stroke="currentColor"
+
+                stroke-width="1.5"
+
+                stroke-linecap="round"
+
+                stroke-linejoin="round"
+
+              >
+
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+
+
+
+                <circle cx="12" cy="7" r="4" />
+
+              </svg>
+
+            </div>
+
+
+
+            <span class="topbar-username" id="topbarUsername">Pengguna</span>
+
+          </a>
+
+        </div>
+
+      </header>
+
+
+
+      <!-- ===== CONTENT AREA: HALAMAN LAPOR ===== -->
+      <main class="dashboard-content lapor-content" role="main">
+        <nav class="lapor-breadcrumb" aria-label="Breadcrumb">
+          <a href="beranda.html">Beranda</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">Lapor</span>
+        </nav>
+
+        <div class="lapor-page-heading">
+          <div>
+            <h1>Lapor</h1>
+          </div>
+          <button type="button" class="lapor-button lapor-button-primary" id="btnOpenLaporForm">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14M5 12h14"></path>
+            </svg>
+            <span>+ Buat Laporan</span>
+          </button>
+        </div>
+
+        <section class="lapor-panel" aria-label="Daftar laporan">
+          <div class="lapor-tabs" role="tablist" aria-label="Jenis laporan">
+            <button
+              type="button"
+              class="lapor-tab is-active"
+              id="tabDaftarLaporan"
+              role="tab"
+              aria-selected="true"
+              aria-controls="laporTabPanel"
+              data-tab="list"
+            >Daftar Laporan</button>
+            <button
+              type="button"
+              class="lapor-tab"
+              id="tabRiwayatLaporan"
+              role="tab"
+              aria-selected="false"
+              aria-controls="laporTabPanel"
+              data-tab="history"
+              tabindex="-1"
+            >Riwayat Laporan</button>
+          </div>
+
+          <div id="laporTabPanel" role="tabpanel" aria-labelledby="tabDaftarLaporan">
+            <div class="lapor-toolbar">
+              <label class="lapor-search">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="m20 20-4-4"></path>
+                </svg>
+                <input
+                  type="search"
+                  id="laporSearch"
+                  placeholder="Cari laporan..."
+                  aria-label="Cari laporan"
+                  autocomplete="off"
+                />
+              </label>
+
+              <label class="lapor-status-filter">
+                <span class="lapor-filter-label">Filter status</span>
+                <select id="laporStatusFilter" aria-label="Filter berdasarkan status">
+                  <option value="all">Semua status</option>
+                  <option value="Dikirim">Dikirim</option>
+                  <option value="Diproses">Diproses</option>
+                  <option value="Selesai">Selesai</option>
+                  <option value="Ditolak">Ditolak</option>
+                </select>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m6 9 6 6 6-6"></path>
+                </svg>
+              </label>
+
+              <span class="lapor-results-count" id="laporResultsCount">6 laporan</span>
+            </div>
+
+            <div class="lapor-table-wrap" id="laporTableWrap">
+              <table class="lapor-table">
+                <thead>
+                  <tr>
+                    <th class="lapor-col-number" scope="col">No</th>
+                    <th scope="col">Judul Laporan</th>
+                    <th scope="col">Kategori</th>
+                    <th scope="col">Tanggal</th>
+                    <th scope="col">Status</th>
+                    <th class="lapor-col-action" scope="col">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="laporTableBody">
+                  <tr>
+                    <td>1</td>
+                    <td class="lapor-title-cell">Sampah menumpuk di Blok A</td>
+                    <td>Kebersihan</td>
+                    <td>14 Okt 2026</td>
+                    <td><span class="lapor-status-badge lapor-status-diproses">Diproses</span></td>
+                    <td class="lapor-col-action">Detail</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="lapor-empty-state" id="laporEmptyState" hidden>
+              <div class="lapor-empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="m20 20-4-4"></path>
+                </svg>
+              </div>
+              <strong id="laporEmptyTitle">Laporan tidak ditemukan</strong>
+              <p id="laporEmptyDescription">Coba ubah kata kunci atau filter status yang dipilih.</p>
+              <button type="button" class="lapor-empty-reset" id="btnResetLaporFilter">Reset pencarian dan filter</button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Modal Buat Laporan -->
+      <div class="lapor-modal" id="laporFormModal" hidden>
+        <button type="button" class="lapor-modal-backdrop" data-close-lapor-modal aria-label="Tutup formulir"></button>
+        <section class="lapor-modal-card" role="dialog" aria-modal="true" aria-labelledby="laporFormTitle">
+          <button type="button" class="lapor-modal-close" data-close-lapor-modal aria-label="Tutup">×</button>
+          <p class="lapor-modal-eyebrow">PUSAT PELAPORAN WARGA</p>
+          <h2 id="laporFormTitle">Buat Laporan Baru</h2>
+          <p class="lapor-modal-description">Sampaikan kendala atau kejadian di lingkungan COMPLEX agar dapat ditindaklanjuti pengurus.</p>
+
+          <form class="lapor-form" id="laporForm">
+            <div class="lapor-form-grid">
+              <label class="lapor-form-field">
+                Judul Laporan
+                <input type="text" id="laporTitle" name="title" maxlength="100" placeholder="Contoh: Lampu jalan mati" required />
+              </label>
+
+              <label class="lapor-form-field">
+                Kategori
+                <select id="laporCategory" name="category" required>
+                  <option value="">Pilih kategori</option>
+                  <option value="Kebersihan">Kebersihan</option>
+                  <option value="Fasilitas">Fasilitas</option>
+                  <option value="Keamanan">Keamanan</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+              </label>
+
+              <label class="lapor-form-field">
+                Tanggal Kejadian
+                <input type="date" id="laporDate" name="date" required />
+              </label>
+
+              <label class="lapor-form-field">
+                Lokasi
+                <input type="text" id="laporLocation" name="location" maxlength="120" placeholder="Contoh: Blok A dekat taman" required />
+              </label>
+            </div>
+
+            <label class="lapor-form-field">
+              Keterangan
+              <textarea id="laporDescription" name="description" rows="4" maxlength="1200" placeholder="Jelaskan kejadian atau kendala secara singkat dan jelas..." required></textarea>
+            </label>
+
+            <div class="lapor-form-actions">
+              <button type="button" class="lapor-button lapor-button-secondary" data-close-lapor-modal>Batalkan</button>
+              <button type="submit" class="lapor-button lapor-button-primary">Kirim Laporan</button>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <!-- Modal Detail Laporan -->
+      <div class="lapor-modal" id="laporDetailModal" hidden>
+        <button type="button" class="lapor-modal-backdrop" data-close-lapor-modal aria-label="Tutup detail"></button>
+        <section class="lapor-modal-card" role="dialog" aria-modal="true" aria-labelledby="laporDetailTitle">
+          <button type="button" class="lapor-modal-close" data-close-lapor-modal aria-label="Tutup">×</button>
+          <p class="lapor-modal-eyebrow">RINCIAN PELAPORAN</p>
+          <h2 id="laporDetailTitle">Detail Laporan</h2>
+          <div class="lapor-detail-meta">
+            <span id="laporDetailDate">—</span>
+            <span id="laporDetailStatus" class="lapor-status-badge lapor-status-default">—</span>
+          </div>
+          <div class="lapor-detail-grid">
+            <div>
+              <span>Kategori</span>
+              <strong id="laporDetailCategory">—</strong>
+            </div>
+            <div>
+              <span>Lokasi</span>
+              <strong id="laporDetailLocation">—</strong>
+            </div>
+            <div>
+              <span>Pelapor</span>
+              <strong id="laporDetailReporter">—</strong>
+            </div>
+            <div class="lapor-detail-full">
+              <span>Keterangan</span>
+              <p id="laporDetailDescription">—</p>
+            </div>
+          </div>
+          <div class="lapor-form-actions">
+            <button type="button" class="lapor-button lapor-button-primary" data-close-lapor-modal>Mengerti</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="lapor-toast" id="laporToast" role="status" aria-live="polite"></div>
+
+    </div>
+
+
+
+    <!-- Toast Notification -->
+
+
+
+    <div
+
+      id="toastNotif"
+
+      class="toast-notif"
+
+      role="alert"
+
+      aria-live="polite"
+
+    ></div>
+
+
+
+    <!-- Modal Placeholder -->
+
+
+
+    <div
+
+      id="placeholderModal"
+
+      class="modal-overlay"
+
+      role="dialog"
+
+      aria-modal="true"
+
+      aria-labelledby="placeholderTitle"
+
+      style="display: none"
+
+    >
+
+      <div class="modal-box">
+
+        <div class="modal-icon-wrap">
+
+          <svg
+
+            width="40"
+
+            height="40"
+
+            viewBox="0 0 24 24"
+
+            fill="none"
+
+            stroke="#0B2A5B"
+
+            stroke-width="2"
+
+          >
+
+            <circle cx="12" cy="12" r="10" />
+
+
+
+            <line x1="12" y1="8" x2="12" y2="12" />
+
+
+
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+
+          </svg>
+
+        </div>
+
+
+
+        <h3 class="modal-title" id="placeholderTitle">Fitur Belum Tersedia</h3>
+
+
+
+        <p class="modal-desc" id="placeholderDesc">
+
+          Halaman ini akan dikembangkan pada tahap selanjutnya.
+
+        </p>
+
+
+
+        <button
+
+          class="btn btn-primary"
+
+          id="btnCloseModal"
+
+          onclick="closePlaceholderModal()"
+
+        >
+
+          Mengerti
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+
+    <script src="js/app.js"></script>
+
+
+
+    <script src="js/complex-profile.js"></script>
+
+
+
+    <script src="js/dashboard.js"></script>
+
+
+
+    <script>
+
+      // Fallback sinkronisasi identitas: membaca data yang disimpan oleh Login.
+
+
+
+      // Script ini sengaja mandiri agar greeting tetap berubah meskipun dashboard.js gagal dimuat.
+
+
+
+      (function () {
+
+        function readJson(storage, key) {
+
+          try {
+
+            var raw = storage.getItem(key);
+
+
+
+            var value = raw ? JSON.parse(raw) : {};
+
+
+
+            return value && typeof value === "object" ? value : {};
+
+          } catch (error) {
+
+            return {};
+
+          }
+
+        }
+
+
+
+        function readValue(storage, key) {
+
+          try {
+
+            return (storage.getItem(key) || "").trim();
+
+          } catch (error) {
+
+            return "";
+
+          }
+
+        }
+
+
+
+        function firstNonEmpty() {
+
+          for (var i = 0; i < arguments.length; i++) {
+
+            if (typeof arguments[i] === "string" && arguments[i].trim())
+
+              return arguments[i].trim();
+
+          }
+
+
+
+          return "";
+
+        }
+
+
+
+        function renderIdentityFromStorage() {
+
+          var active = readJson(sessionStorage, "cx_active_profile");
+
+
+
+          var stored = readJson(localStorage, "cx_profile");
+
+
+
+          var profile = {
+
+            nama: firstNonEmpty(
+
+              active.nama,
+
+
+
+              readValue(sessionStorage, "cx_nama"),
+
+
+
+              stored.nama,
+
+
+
+              readValue(localStorage, "cx_nama"),
+
+
+
+              active.namaLengkap,
+
+
+
+              stored.namaLengkap,
+
+            ),
+
+
+
+            blok: firstNonEmpty(
+
+              active.blok,
+
+
+
+              readValue(sessionStorage, "cx_blok"),
+
+
+
+              stored.blok,
+
+
+
+              readValue(localStorage, "cx_blok"),
+
+            ),
+
+
+
+            noRumah: firstNonEmpty(
+
+              active.noRumah,
+
+
+
+              readValue(sessionStorage, "cx_noRumah"),
+
+
+
+              stored.noRumah,
+
+
+
+              readValue(localStorage, "cx_noRumah"),
+
+            ),
+
+          };
+
+
+
+          var firstName = profile.nama
+
+            ? profile.nama.split(/\s+/)[0]
+
+            : "Pengguna";
+
+
+
+          var greeting = document.getElementById("profilNama");
+
+
+
+          var topbarName = document.getElementById("topbarUsername");
+
+
+
+          var blockBadge = document.getElementById("profilBadgeBlok");
+
+
+
+          var houseBadge = document.getElementById("profilBadgeNoRumah");
+
+
+
+          if (greeting) greeting.textContent = "Halo, " + firstName;
+
+
+
+          if (topbarName) topbarName.textContent = firstName;
+
+
+
+          if (blockBadge)
+
+            blockBadge.textContent = profile.blok
+
+              ? "BLOK " + profile.blok.toUpperCase()
+
+              : "BLOK —";
+
+
+
+          if (houseBadge) houseBadge.textContent = profile.noRumah || "—";
+
+        }
+
+
+
+        renderIdentityFromStorage();
+
+
+
+        window.addEventListener("pageshow", renderIdentityFromStorage);
+
+
+
+        window.addEventListener("focus", renderIdentityFromStorage);
+
+
+
+        window.addEventListener("storage", renderIdentityFromStorage);
+
+      })();
+
+    </script>
+
+
+
+    <script src="js/navigation.js"></script>
+    <script src="js/lapor.js"></script>
+
+  </body>
+
+</html>

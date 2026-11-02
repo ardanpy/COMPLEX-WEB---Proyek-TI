@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>COMPLEX &mdash; Kebersihan | Dashboard Warga</title>
+    <meta
+      content="Halaman Kebersihan COMPLEX &mdash; jadwal kebersihan lingkungan dan laporan penanganan sampah warga."
+      name="description"
+    />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/kebersihan.css" rel="stylesheet" />
+  </head>
+  <body class="dashboard-body kebersihan-page">
+    <!-- ======================================================
+
+
+
+       HALAMAN LAPOR
+
+
+
+  ======================================================= -->
+    <!-- ===== SIDEBAR ===== -->
+    <aside
+      aria-label="Menu utama"
+      class="sidebar"
+      id="sidebar"
+      role="navigation"
+    >
+      <div class="sidebar-logo">
+        <div aria-hidden="true" class="sidebar-logo-icon">
+          <img
+            alt=""
+            class="sidebar-logo-image"
+            height="25"
+            src="assets/complex-houselogo.png"
+            width="34"
+          />
+        </div>
+        <span class="sidebar-logo-text">
+          <span class="sidebar-logo-main"> Comple </span>
+          <span class="sidebar-logo-accent"> X </span>
+        </span>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="sidebar-nav-item" href="beranda.html" id="nav-beranda">
+          <svg
+            class="nav-icon"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          Beranda
+        </a>
+        <a class="sidebar-nav-item" href="keamanan.html" id="nav-keamanan">
+          <svg
+            class="nav-icon"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          Keamanan
+        </a>
+        <a
+          class="sidebar-nav-item sigap-nav-item"
+          href="sigap.html"
+          id="nav-sigap"
+        >
+          <svg
+            class="nav-icon"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+          >
+            <path
+              d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+            ></path>
+            <line x1="12" x2="12" y1="9" y2="13"></line>
+            <line x1="12" x2="12.01" y1="17" y2="17"></line>
+          </svg>
+          SIGAP
+        </a>
+        <a class="sidebar-nav-item" href="komunitas.html" id="nav-komunitas">
+          <svg
+            class="nav-icon"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          Komunitas
+        </a>
+        <a class="sidebar-nav-item" href="lapor.html" id="nav-lapor">
+          <svg
+            class="nav-icon"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+          >
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            ></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" x2="8" y1="13" y2="13"></line>
+            <line x1="16" x2="8" y1="17" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          Lapor
+        </a>
+        <a
+          aria-current="page"
+          class="sidebar-nav-item active"
+          href="kebersihan.html"
+          id="nav-kebersihan"
+        >
+          <svg
+            class="nav-icon"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+          >
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"
+            ></path>
+          </svg>
+          Kebersihan
+        </a>
+        <a
+          class="sidebar-nav-item"
+          href="#"
+          id="nav-fasilitas"
+          onclick="
+            showPlaceholder('Fasilitas');
+
+            return false;
+          "
+        >
+          <svg
+            class="nav-icon"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+          >
+            <rect height="7" width="7" x="3" y="3"></rect>
+            <rect height="7" width="7" x="14" y="3"></rect>
+            <rect height="7" width="7" x="14" y="14"></rect>
+            <rect height="7" width="7" x="3" y="14"></rect>
+          </svg>
+          Fasilitas
+        </a>
+        <a
+          class="sidebar-nav-item"
+          href="#"
+          id="nav-notifikasi"
+          onclick="
+            showPlaceholder('Notifikasi');
+
+            return false;
+          "
+        >
+          <svg
+            class="nav-icon"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+          >
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          Notifikasi
+        </a>
+        <a class="sidebar-nav-item" href="profil.html" id="nav-profil">
+          <svg
+            class="nav-icon"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          Profil
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a
+          class="sidebar-nav-item sidebar-logout"
+          href="index.html"
+          id="nav-logout"
+        >
+          <svg
+            class="nav-icon"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" x2="9" y1="12" y2="12"></line>
+          </svg>
+          Logout
+        </a>
+      </div>
+    </aside>
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="dashboard-main">
+      <!-- ===== TOPBAR / HEADER ===== -->
+      <header class="topbar" role="banner">
+        <div class="topbar-search">
+          <svg
+            class="search-icon"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+          </svg>
+          <input
+            aria-label="Cari fitur"
+            class="topbar-search-input"
+            id="searchInput"
+            placeholder="Mau cari fitur apa?"
+            type="search"
+          />
+        </div>
+        <div class="topbar-actions">
+          <button
+            aria-label="Pesan"
+            class="topbar-action-btn"
+            id="btnMsg"
+            onclick="showPlaceholder('Pesan')"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+            >
+              <rect height="16" rx="2" width="20" x="2" y="4"></rect>
+              <polyline points="2,4 12,13 22,4"></polyline>
+            </svg>
+          </button>
+          <button
+            aria-label="Notifikasi"
+            class="topbar-action-btn"
+            id="btnNotif"
+            onclick="showPlaceholder('Notifikasi')"
+          >
+            <span class="notif-dot"> </span>
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+            >
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <button
+            aria-label="Pengaturan"
+            class="topbar-action-btn"
+            id="btnSettings"
+            onclick="showPlaceholder('Pengaturan')"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="3"></circle>
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+              ></path>
+            </svg>
+          </button>
+          <a
+            aria-label="Buka profil pengguna"
+            class="topbar-avatar"
+            href="profil.html"
+            id="btnAvatar"
+          >
+            <div class="avatar-circle">
+              <svg
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                viewbox="0 0 24 24"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <span class="topbar-username" id="topbarUsername"> Pengguna </span>
+          </a>
+        </div>
+      </header>
+      <!-- ===== CONTENT AREA: HALAMAN LAPOR ===== -->
+      <main class="dashboard-content kebersihan-content" role="main">
+        <nav aria-label="Breadcrumb" class="kebersihan-breadcrumb">
+          <a href="beranda.html"> Beranda </a>
+          <span aria-hidden="true"> / </span>
+          <span aria-current="page"> Kebersihan </span>
+        </nav>
+        <header class="kebersihan-heading">
+          <h1>Kebersihan</h1>
+        </header>
+        <div class="kebersihan-layout">
+          <section
+            aria-labelledby="jadwalTitle"
+            class="kebersihan-card jadwal-card"
+          >
+            <h2 id="jadwalTitle">Jadwal Kebersihan</h2>
+            <div class="jadwal-table-wrap">
+              <table class="jadwal-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Hari</th>
+                    <th scope="col">Area</th>
+                    <th scope="col">Waktu</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Senin</td>
+                    <td>Jati 1</td>
+                    <td>07.00 - 09.00</td>
+                  </tr>
+                  <tr>
+                    <td>Selasa</td>
+                    <td>Jati 2</td>
+                    <td>07.00 - 09.00</td>
+                  </tr>
+                  <tr>
+                    <td>Rabu</td>
+                    <td>Jati 3</td>
+                    <td>07.00 - 09.00</td>
+                  </tr>
+                  <tr>
+                    <td>Kamis</td>
+                    <td>Taman dan fasilitas</td>
+                    <td>07.00 - 09.00</td>
+                  </tr>
+                  <tr>
+                    <td>Jumat</td>
+                    <td>Jalan utama</td>
+                    <td>07.00 - 09.00</td>
+                  </tr>
+                  <tr>
+                    <td>Sabtu</td>
+                    <td>Kerja bakti warga</td>
+                    <td>06.30 - 09.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+          <div class="kebersihan-side-column">
+            <section
+              aria-labelledby="laporSampahTitle"
+              class="kebersihan-card lapor-sampah-card"
+            >
+              <h2 id="laporSampahTitle">Laporan Sampah</h2>
+              <p>Ada sampah yang belum terangkut?</p>
+              <button
+                class="kebersihan-primary-button"
+                id="btnOpenSampahForm"
+                type="button"
+              >
+                <span aria-hidden="true"> + </span>
+                Laporkan Sampah
+              </button>
+            </section>
+            <section
+              aria-labelledby="statusTitle"
+              class="kebersihan-card status-card"
+            >
+              <h2 id="statusTitle">Status Penanganan</h2>
+              <div aria-live="polite" class="status-list" id="statusList">
+                <article class="status-item">
+                  <h3>Sampah menumpuk Jati 1</h3>
+                  <p>Dilaporkan 14 Okt 2026</p>
+                  <p class="status-routing">
+                    Lokasi: Jati 1 · Tujuan: Penanggung Jawab Kebersihan
+                  </p>
+                  <span class="status-badge status-diproses"> Diproses </span>
+                </article>
+                <article class="status-item">
+                  <h3>Selokan tersumbat Jati 3</h3>
+                  <p>Dilaporkan 14 Okt 2026</p>
+                  <p class="status-routing">
+                    Lokasi: Jati 3 · Tujuan: Pengurus RT
+                  </p>
+                  <span class="status-badge status-dikirim"> Dikirim </span>
+                </article>
+                <article class="status-item">
+                  <h3>Tong sampah penuh</h3>
+                  <p>Dilaporkan 14 Okt 2026</p>
+                  <p class="status-routing">
+                    Lokasi: Area taman · Tujuan: Penanggung Jawab Kebersihan
+                  </p>
+                  <span class="status-badge status-selesai"> Selesai </span>
+                </article>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+      <!-- Modal Buat Laporan -->
+      <!-- Modal Detail Laporan -->
+      <div class="kebersihan-modal" hidden="" id="sampahFormModal">
+        <button
+          aria-label="Tutup formulir"
+          class="kebersihan-modal-backdrop"
+          data-close-sampah-modal=""
+          type="button"
+        ></button>
+        <section
+          aria-labelledby="sampahFormTitle"
+          aria-modal="true"
+          class="kebersihan-modal-card"
+          role="dialog"
+        >
+          <button
+            aria-label="Tutup"
+            class="kebersihan-modal-close"
+            data-close-sampah-modal=""
+            type="button"
+          >
+            &times;
+          </button>
+          <p class="kebersihan-modal-eyebrow">KEBERSIHAN LINGKUNGAN</p>
+          <h2 id="sampahFormTitle">Laporkan Sampah</h2>
+          <p class="kebersihan-modal-description">
+            Sampaikan lokasi dan kondisi sampah, lalu pilih pihak yang menjadi
+            tujuan laporan.
+          </p>
+          <form class="kebersihan-form" id="sampahForm">
+            <label class="kebersihan-form-field">
+              Judul Laporan
+              <input
+                id="sampahTitle"
+                maxlength="100"
+                name="title"
+                placeholder="Contoh: Sampah menumpuk di Jati 1"
+                required=""
+                type="text"
+              />
+            </label>
+            <label class="kebersihan-form-field">
+              Lokasi
+              <select id="sampahLocation" name="location" required="">
+                <option disabled="" selected="" value="">
+                  Pilih lokasi laporan
+                </option>
+                <option value="Jati 1">Jati 1</option>
+                <option value="Jati 2">Jati 2</option>
+                <option value="Jati 3">Jati 3</option>
+                <option value="Jati 4">Jati 4</option>
+                <option value="Jati 5">Jati 5</option>
+                <option value="Jati 6">Jati 6</option>
+                <option value="Jati 7">Jati 7</option>
+                <option value="Taman dan fasilitas">Taman dan fasilitas</option>
+                <option value="Jalan utama">Jalan utama</option>
+                <option value="Area umum lainnya">Area umum lainnya</option>
+              </select>
+            </label>
+            <label class="kebersihan-form-field">
+              Diteruskan kepada
+              <select id="sampahRecipient" name="recipient" required="">
+                <option value="Penanggung Jawab Kebersihan" selected="">
+                  Penanggung Jawab Kebersihan
+                </option>
+                <option value="Pengurus RT">Pengurus RT</option>
+              </select>
+            </label>
+            <label class="kebersihan-form-field">
+              Keterangan
+              <textarea
+                id="sampahDescription"
+                maxlength="1000"
+                name="description"
+                placeholder="Jelaskan kondisi sampah dan titik lokasinya..."
+                required=""
+                rows="4"
+              ></textarea>
+            </label>
+            <div class="kebersihan-form-actions">
+              <button
+                class="kebersihan-secondary-button"
+                data-close-sampah-modal=""
+                type="button"
+              >
+                Batalkan
+              </button>
+              <button class="kebersihan-primary-button" type="submit">
+                Kirim Laporan
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+      <div
+        aria-live="polite"
+        class="kebersihan-toast"
+        id="kebersihanToast"
+        role="status"
+      ></div>
+    </div>
+    <!-- Toast Notification -->
+    <div
+      aria-live="polite"
+      class="toast-notif"
+      id="toastNotif"
+      role="alert"
+    ></div>
+    <!-- Modal Placeholder -->
+    <div
+      aria-labelledby="placeholderTitle"
+      aria-modal="true"
+      class="modal-overlay"
+      id="placeholderModal"
+      role="dialog"
+      style="display: none"
+    >
+      <div class="modal-box">
+        <div class="modal-icon-wrap">
+          <svg
+            fill="none"
+            height="40"
+            stroke="#0B2A5B"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+            width="40"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" x2="12" y1="8" y2="12"></line>
+            <line x1="12" x2="12.01" y1="16" y2="16"></line>
+          </svg>
+        </div>
+        <h3 class="modal-title" id="placeholderTitle">Fitur Belum Tersedia</h3>
+        <p class="modal-desc" id="placeholderDesc">
+          Halaman ini akan dikembangkan pada tahap selanjutnya.
+        </p>
+        <button
+          class="btn btn-primary"
+          id="btnCloseModal"
+          onclick="closePlaceholderModal()"
+        >
+          Mengerti
+        </button>
+      </div>
+    </div>
+    <script src="js/app.js"></script>
+    <script src="js/complex-profile.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+      // Fallback sinkronisasi identitas: membaca data yang disimpan oleh Login.
+
+      // Script ini sengaja mandiri agar greeting tetap berubah meskipun dashboard.js gagal dimuat.
+
+      (function () {
+        function readJson(storage, key) {
+          try {
+            var raw = storage.getItem(key);
+
+            var value = raw ? JSON.parse(raw) : {};
+
+            return value && typeof value === "object" ? value : {};
+          } catch (error) {
+            return {};
+          }
+        }
+
+        function readValue(storage, key) {
+          try {
+            return (storage.getItem(key) || "").trim();
+          } catch (error) {
+            return "";
+          }
+        }
+
+        function firstNonEmpty() {
+          for (var i = 0; i < arguments.length; i++) {
+            if (typeof arguments[i] === "string" && arguments[i].trim())
+              return arguments[i].trim();
+          }
+
+          return "";
+        }
+
+        function renderIdentityFromStorage() {
+          var active = readJson(sessionStorage, "cx_active_profile");
+
+          var stored = readJson(localStorage, "cx_profile");
+
+          var profile = {
+            nama: firstNonEmpty(
+              active.nama,
+
+              readValue(sessionStorage, "cx_nama"),
+
+              stored.nama,
+
+              readValue(localStorage, "cx_nama"),
+
+              active.namaLengkap,
+
+              stored.namaLengkap,
+            ),
+
+            blok: firstNonEmpty(
+              active.blok,
+
+              readValue(sessionStorage, "cx_blok"),
+
+              stored.blok,
+
+              readValue(localStorage, "cx_blok"),
+            ),
+
+            noRumah: firstNonEmpty(
+              active.noRumah,
+
+              readValue(sessionStorage, "cx_noRumah"),
+
+              stored.noRumah,
+
+              readValue(localStorage, "cx_noRumah"),
+            ),
+          };
+
+          var firstName = profile.nama
+            ? profile.nama.split(/\s+/)[0]
+            : "Pengguna";
+
+          var greeting = document.getElementById("profilNama");
+
+          var topbarName = document.getElementById("topbarUsername");
+
+          var blockBadge = document.getElementById("profilBadgeBlok");
+
+          var houseBadge = document.getElementById("profilBadgeNoRumah");
+
+          if (greeting) greeting.textContent = "Halo, " + firstName;
+
+          if (topbarName) topbarName.textContent = firstName;
+
+          if (blockBadge)
+            blockBadge.textContent = profile.blok
+              ? "BLOK " + profile.blok.toUpperCase()
+              : "BLOK —";
+
+          if (houseBadge) houseBadge.textContent = profile.noRumah || "—";
+        }
+
+        renderIdentityFromStorage();
+
+        window.addEventListener("pageshow", renderIdentityFromStorage);
+
+        window.addEventListener("focus", renderIdentityFromStorage);
+
+        window.addEventListener("storage", renderIdentityFromStorage);
+      })();
+    </script>
+    <script src="js/navigation.js"></script>
+    <script src="js/kebersihan.js"></script>
+  </body>
+</html>

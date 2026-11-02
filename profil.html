@@ -1,0 +1,1181 @@
+<!doctype html>
+
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>COMPLEX — Profil | Dashboard Warga</title>
+
+    <meta
+      name="description"
+      content="Dashboard COMPLEX — kelola iuran, pantau keamanan, akses SIGAP, dan ikuti acara komunitas warga kompleks."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght\@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body class="dashboard-body profile-dashboard-body">
+    <!-- ======================================================
+
+       HALAMAN PROFIL WARGA
+
+  ======================================================= -->
+
+    <!-- ===== SIDEBAR ===== -->
+
+    <aside
+      class="sidebar"
+      id="sidebar"
+      role="navigation"
+      aria-label="Menu utama"
+    >
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon" aria-hidden="true">
+          <img
+            class="sidebar-logo-image"
+            src="assets/complex-houselogo.png"
+            alt=""
+            width="34"
+            height="25"
+          />
+        </div>
+
+        <span class="sidebar-logo-text"
+          ><span class="sidebar-logo-main">Comple</span
+          ><span class="sidebar-logo-accent">X</span></span
+        >
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="beranda.html" class="sidebar-nav-item" id="nav-beranda">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+
+          Beranda
+        </a>
+
+        <a href="keamanan.html" class="sidebar-nav-item" id="nav-keamanan">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+
+          Keamanan
+        </a>
+
+        <a
+          href="sigap.html"
+          class="sidebar-nav-item sigap-nav-item"
+          id="nav-sigap"
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+            />
+
+            <line x1="12" y1="9" x2="12" y2="13" />
+
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+
+          SIGAP
+        </a>
+
+        <a href="komunitas.html" class="sidebar-nav-item" id="nav-komunitas">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+
+            <circle cx="9" cy="7" r="4" />
+
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+
+          Komunitas
+        </a>
+
+        <a
+          href="#"
+          class="sidebar-nav-item"
+          id="nav-lapor"
+          onclick="
+            showPlaceholder('Lapor');
+
+            return false;
+          "
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            />
+
+            <polyline points="14 2 14 8 20 8" />
+
+            <line x1="16" y1="13" x2="8" y2="13" />
+
+            <line x1="16" y1="17" x2="8" y2="17" />
+
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+
+          Lapor
+        </a>
+
+        <a
+          href="#"
+          class="sidebar-nav-item"
+          id="nav-kebersihan"
+          onclick="
+            showPlaceholder('Kebersihan');
+
+            return false;
+          "
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="3 6 5 6 21 6" />
+
+            <path
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"
+            />
+          </svg>
+
+          Kebersihan
+        </a>
+
+        <a
+          href="#"
+          class="sidebar-nav-item"
+          id="nav-fasilitas"
+          onclick="
+            showPlaceholder('Fasilitas');
+
+            return false;
+          "
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="3" width="7" height="7" />
+
+            <rect x="14" y="3" width="7" height="7" />
+
+            <rect x="14" y="14" width="7" height="7" />
+
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+
+          Fasilitas
+        </a>
+
+        <a
+          href="#"
+          class="sidebar-nav-item"
+          id="nav-notifikasi"
+          onclick="
+            showPlaceholder('Notifikasi');
+
+            return false;
+          "
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+
+          Notifikasi
+        </a>
+
+        <a
+          href="profil.html"
+          class="sidebar-nav-item active"
+          id="nav-profil"
+          aria-current="page"
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+
+          Profil
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a
+          href="index.html"
+          class="sidebar-nav-item sidebar-logout"
+          id="nav-logout"
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+
+            <polyline points="16 17 21 12 16 7" />
+
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+
+          Logout
+        </a>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+
+    <div class="dashboard-main">
+      <!-- ===== TOPBAR / HEADER ===== -->
+
+      <header class="topbar" role="banner">
+        <div class="topbar-search">
+          <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+
+          <input
+            type="search"
+            class="topbar-search-input"
+            placeholder="Mau cari fitur apa?"
+            id="searchInput"
+            aria-label="Cari fitur"
+          />
+        </div>
+
+        <div class="topbar-actions">
+          <button
+            class="topbar-action-btn"
+            id="btnMsg"
+            aria-label="Pesan"
+            onclick="showPlaceholder('Pesan')"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+
+              <polyline points="2,4 12,13 22,4" />
+            </svg>
+          </button>
+
+          <button
+            class="topbar-action-btn"
+            id="btnNotif"
+            aria-label="Notifikasi"
+            onclick="showPlaceholder('Notifikasi')"
+          >
+            <span class="notif-dot"></span>
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+          </button>
+
+          <button
+            class="topbar-action-btn"
+            id="btnSettings"
+            aria-label="Pengaturan"
+            onclick="showPlaceholder('Pengaturan')"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="3" />
+
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+              />
+            </svg>
+          </button>
+
+          <a
+            href="profil.html"
+            class="topbar-avatar"
+            id="btnAvatar"
+            aria-label="Buka profil pengguna"
+          >
+            <div class="avatar-circle">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+
+            <span class="topbar-username" id="topbarUsername">Pengguna</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- ===== CONTENT AREA ===== -->
+
+      <main class="dashboard-content profile-content" role="main">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a class="breadcrumb-link" href="beranda.html">Beranda</a>
+
+          <span class="breadcrumb-sep" aria-hidden="true">/</span>
+
+          <span aria-current="page">Profil</span>
+        </nav>
+
+        <div class="profile-page-heading">
+          <div>
+            <p class="profile-eyebrow">AKUN WARGA COMPLEX</p>
+
+            <h1 class="page-title">Profil Saya</h1>
+
+            <p class="page-subtitle">
+              Kelola informasi pribadi dan data tempat tinggal Anda.
+            </p>
+          </div>
+
+          <a class="btn btn-outline profile-back-link" href="beranda.html">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m15 18-6-6 6-6" />
+
+              <path d="M9 12h12" />
+            </svg>
+
+            Kembali ke Beranda
+          </a>
+        </div>
+
+        <!-- Ringkasan profil: dihitung dari data yang benar-benar tersimpan -->
+
+        <section class="profile-insights" aria-label="Ringkasan profil">
+          <article class="profile-insight-card profile-insight-completion">
+            <div class="profile-insight-top">
+              <span class="profile-insight-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="5" y="4" width="14" height="17" rx="2" />
+
+                  <path d="M9 4.5h6M9 10h6M9 14h6M9 18h3" />
+                </svg>
+              </span>
+
+              <div class="profile-insight-copy">
+                <span class="profile-insight-label">Kelengkapan Profil</span>
+
+                <strong id="profileCompletionValue">0 dari 5 data</strong>
+              </div>
+            </div>
+
+            <div
+              class="profile-progress-track"
+              role="progressbar"
+              aria-label="Kelengkapan data profil"
+              aria-valuemin="0"
+              aria-valuemax="5"
+              aria-valuenow="0"
+              id="profileCompletionProgress"
+            >
+              <span id="profileCompletionBar"></span>
+            </div>
+
+            <p class="profile-insight-footnote" id="profileCompletionHint">
+              Lengkapi data diri dan alamat agar profil lebih akurat.
+            </p>
+          </article>
+
+          <article class="profile-insight-card profile-insight-residence">
+            <div class="profile-insight-top">
+              <span class="profile-insight-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m3 10 9-7 9 7" />
+
+                  <path d="M5 9v11h14V9M9 20v-6h6v6" />
+                </svg>
+              </span>
+
+              <div class="profile-insight-copy">
+                <span class="profile-insight-label">Alamat Terdaftar</span>
+
+                <strong id="profileResidenceValue">Alamat belum diisi</strong>
+              </div>
+            </div>
+
+            <p class="profile-insight-footnote" id="profileResidenceDetail">
+              Cluster Jati · Lengkapi blok dan nomor rumah
+            </p>
+          </article>
+
+          <article class="profile-insight-card profile-insight-contact">
+            <div class="profile-insight-top">
+              <span class="profile-insight-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 11.2 18a19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 3.2 2 2 0 0 1 4.1 1h3a2 2 0 0 1 2 1.7l.4 2.8a2 2 0 0 1-.6 1.7L7.1 9a16 16 0 0 0 6 6l1.8-1.8a2 2 0 0 1 1.7-.6l2.8.4a2 2 0 0 1 1.6 1.9Z"
+                  />
+                </svg>
+              </span>
+
+              <div class="profile-insight-copy">
+                <span class="profile-insight-label">Kontak Warga</span>
+
+                <strong id="profileContactValue">Kontak belum lengkap</strong>
+              </div>
+            </div>
+
+            <p class="profile-insight-footnote" id="profileContactDetail">
+              Nomor HP dan email dapat diperbarui melalui formulir di bawah.
+            </p>
+          </article>
+        </section>
+
+        <section class="profile-layout" aria-label="Pengaturan profil warga">
+          <aside class="card profile-summary-card">
+            <div class="profile-summary-topline">
+              <span class="profile-status-dot"></span><span>Profil Warga</span>
+            </div>
+
+            <div class="profile-avatar-large" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.45"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+
+            <h2 class="profile-summary-name" id="profileDisplayName">
+              Nama Pengguna
+            </h2>
+
+            <p class="profile-summary-caption">Anggota komunitas COMPLEX</p>
+
+            <div class="profile-summary-badges">
+              <span class="badge badge-pinus">CLUSTER JATI</span>
+
+              <span class="badge badge-blok" id="profileSummaryBlock"
+                >BLOK —</span
+              >
+
+              <span class="badge badge-norumah" id="profileSummaryHouse"
+                >—</span
+              >
+            </div>
+
+            <div class="profile-summary-divider"></div>
+
+            <div class="profile-summary-detail">
+              <span>Nomor HP</span>
+
+              <strong id="profileSummaryTelp">Belum diisi</strong>
+            </div>
+
+            <div class="profile-summary-detail">
+              <span>Email</span>
+
+              <strong id="profileSummaryEmail">Belum diisi</strong>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-outline profile-summary-edit"
+              id="btnJumpToProfileForm"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 20h9" />
+
+                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+              </svg>
+
+              Edit Data Profil
+            </button>
+          </aside>
+
+          <section class="card profile-details-card">
+            <div
+              class="profile-tabs"
+              role="tablist"
+              aria-label="Informasi profil"
+            >
+              <button
+                type="button"
+                class="profile-tab is-active"
+                id="tabProfileDetails"
+                role="tab"
+                aria-selected="true"
+                aria-controls="profileDetailsPanel"
+                data-profile-tab="details"
+              >
+                Profil Lengkap
+              </button>
+
+              <button
+                type="button"
+                class="profile-tab"
+                id="tabProfileActivity"
+                role="tab"
+                aria-selected="false"
+                aria-controls="profileActivityPanel"
+                data-profile-tab="activity"
+              >
+                Riwayat Aktivitas
+              </button>
+            </div>
+
+            <div
+              id="profileDetailsPanel"
+              class="profile-tab-panel"
+              role="tabpanel"
+              aria-labelledby="tabProfileDetails"
+            >
+              <div class="profile-section-heading">
+                <div>
+                  <h2>Data Diri</h2>
+
+                  <p>
+                    Perbarui informasi berikut. Perubahan akan ditampilkan di
+                    beranda.
+                  </p>
+                </div>
+
+                <span class="profile-edit-indicator"
+                  ><span class="profile-status-dot"></span> Dapat diedit</span
+                >
+              </div>
+
+              <form id="profileForm" class="profile-form" novalidate>
+                <div class="profile-form-grid">
+                  <div class="form-group" id="pf-fg-nama">
+                    <label class="form-label" for="profileNama"
+                      >Nama Lengkap <span class="required-mark">\*</span></label
+                    >
+
+                    <input
+                      class="form-input"
+                      type="text"
+                      id="profileNama"
+                      name="namaLengkap"
+                      autocomplete="name"
+                      placeholder="Masukkan nama lengkap"
+                      required
+                    />
+
+                    <span class="form-error" id="pf-err-nama"></span>
+                  </div>
+
+                  <div class="form-group" id="pf-fg-telp">
+                    <label class="form-label" for="profileTelp"
+                      >Nomor HP <span class="required-mark">\*</span></label
+                    >
+
+                    <input
+                      class="form-input"
+                      type="tel"
+                      id="profileTelp"
+                      name="nomorHP"
+                      autocomplete="tel"
+                      placeholder="08xxxxxxxxxx"
+                      required
+                    />
+
+                    <span class="form-error" id="pf-err-telp"></span>
+                  </div>
+
+                  <div class="form-group profile-field-full" id="pf-fg-email">
+                    <label class="form-label" for="profileEmail"
+                      >Email <span class="required-mark">\*</span></label
+                    >
+
+                    <input
+                      class="form-input"
+                      type="email"
+                      id="profileEmail"
+                      name="email"
+                      autocomplete="email"
+                      placeholder="nama\@email.com"
+                      required
+                    />
+
+                    <span class="form-error" id="pf-err-email"></span>
+                  </div>
+
+                  <div class="form-group" id="pf-fg-blok">
+                    <label class="form-label" for="profileBlok"
+                      >Blok <span class="required-mark">\*</span></label
+                    >
+
+                    <select
+                      class="form-input form-select"
+                      id="profileBlok"
+                      name="blok"
+                      required
+                    >
+                      <option value="">-- Pilih Blok --</option>
+
+                      <option value="Jati 1">Jati 1</option>
+
+                      <option value="Jati 2">Jati 2</option>
+
+                      <option value="Jati 3">Jati 3</option>
+
+                      <option value="Jati 4">Jati 4</option>
+
+                      <option value="Jati 5">Jati 5</option>
+
+                      <option value="Jati 6">Jati 6</option>
+
+                      <option value="Jati 7">Jati 7</option>
+                    </select>
+
+                    <span class="form-error" id="pf-err-blok"></span>
+                  </div>
+
+                  <div class="form-group" id="pf-fg-norumah">
+                    <label class="form-label" for="profileNoRumah"
+                      >Nomor Rumah <span class="required-mark">\*</span></label
+                    >
+
+                    <input
+                      class="form-input"
+                      type="text"
+                      id="profileNoRumah"
+                      name="noRumah"
+                      placeholder="Contoh: 52"
+                      required
+                    />
+
+                    <span class="form-error" id="pf-err-norumah"></span>
+                  </div>
+                </div>
+
+                <div class="profile-form-note">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+
+                    <path d="M12 16v-4" />
+
+                    <path d="M12 8h.01" />
+                  </svg>
+
+                  Data profil demo disimpan di browser ini. Sistem belum
+                  terhubung ke server atau database.
+                </div>
+
+                <div class="profile-form-actions">
+                  <button
+                    type="button"
+                    class="btn btn-outline"
+                    id="btnResetProfile"
+                  >
+                    Batalkan Perubahan
+                  </button>
+
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="btnSaveProfile"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"
+                      />
+
+                      <path d="M17 21v-8H7v8" />
+
+                      <path d="M7 3v5h8" />
+                    </svg>
+
+                    Simpan Perubahan
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div
+              id="profileActivityPanel"
+              class="profile-tab-panel profile-activity-panel"
+              role="tabpanel"
+              aria-labelledby="tabProfileActivity"
+              hidden
+            >
+              <div class="profile-activity-empty">
+                <div class="profile-activity-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="9" />
+
+                    <path d="M12 7v5l3 2" />
+                  </svg>
+                </div>
+
+                <h2>Belum ada riwayat aktivitas</h2>
+
+                <p>
+                  Aktivitas akun akan ditampilkan di sini ketika fitur
+                  pencatatan aktivitas sudah tersedia.
+                </p>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section
+          class="profile-guidance-section"
+          aria-labelledby="profileGuidanceTitle"
+        >
+          <div class="profile-guidance-heading">
+            <div>
+              <p class="profile-eyebrow">PENGELOLAAN AKUN</p>
+
+              <h2 id="profileGuidanceTitle">Jaga informasi tetap akurat</h2>
+
+              <p>
+                Beberapa hal sederhana agar informasi profil tetap berguna saat
+                dibutuhkan.
+              </p>
+            </div>
+          </div>
+
+          <div class="profile-guidance-grid">
+            <article class="profile-guidance-card guidance-blue">
+              <span class="profile-guidance-icon" aria-hidden="true"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+
+                  <path d="m3 7 9 6 9-6" /></svg
+              ></span>
+
+              <h3>Kontak yang aktif</h3>
+
+              <p>
+                Gunakan nomor HP dan email yang masih dapat diakses supaya
+                informasi warga mudah diperbarui.
+              </p>
+            </article>
+
+            <article class="profile-guidance-card guidance-violet">
+              <span class="profile-guidance-icon" aria-hidden="true"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m3 10 9-7 9 7" />
+
+                  <path d="M5 9v11h14V9M9 20v-6h6v6" /></svg
+              ></span>
+
+              <h3>Alamat yang sesuai</h3>
+
+              <p>
+                Periksa kembali pilihan blok dan nomor rumah. Data ini akan
+                tampil di kartu profil beranda.
+              </p>
+            </article>
+
+            <article class="profile-guidance-card guidance-amber">
+              <span class="profile-guidance-icon" aria-hidden="true"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+
+                  <path d="m9 12 2 2 4-4" /></svg
+              ></span>
+
+              <h3>Data tersimpan lokal</h3>
+
+              <p>
+                Versi demo menyimpan data di browser ini, bukan server. Hindari
+                memasukkan informasi yang sangat sensitif.
+              </p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Toast Notification -->
+
+    <div
+      id="toastNotif"
+      class="toast-notif"
+      role="alert"
+      aria-live="polite"
+    ></div>
+
+    <!-- Modal Placeholder -->
+
+    <div
+      id="placeholderModal"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="placeholderTitle"
+      style="display: none"
+    >
+      <div class="modal-box">
+        <div class="modal-icon-wrap">
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#0B2A5B"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+
+            <line x1="12" y1="8" x2="12" y2="12" />
+
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+
+        <h3 class="modal-title" id="placeholderTitle">Fitur Belum Tersedia</h3>
+
+        <p class="modal-desc" id="placeholderDesc">
+          Halaman ini akan dikembangkan pada tahap selanjutnya.
+        </p>
+
+        <button
+          class="btn btn-primary"
+          id="btnCloseModal"
+          onclick="closePlaceholderModal()"
+        >
+          Mengerti
+        </button>
+      </div>
+    </div>
+
+    <script src="js/app.js"></script>
+
+    <script src="js/complex-profile.js"></script>
+
+    <script src="js/profile.js"></script>
+
+    <script>
+      // Fallback pengisian awal jika helper eksternal terlambat/gagal dimuat.
+
+      (function () {
+        function parse(storage, key) {
+          try {
+            return JSON.parse(storage.getItem(key) || "{}") || {};
+          } catch (error) {
+            return {};
+          }
+        }
+
+        function read(storage, key) {
+          try {
+            return (storage.getItem(key) || "").trim();
+          } catch (error) {
+            return "";
+          }
+        }
+
+        function choose() {
+          for (var i = 0; i < arguments.length; i++)
+            if (String(arguments[i] || "").trim())
+              return String(arguments[i]).trim();
+
+          return "";
+        }
+
+        function fillInitialProfile() {
+          var active = parse(sessionStorage, "cx_active_profile");
+
+          var stored = parse(localStorage, "cx_profile");
+
+          var profile = {
+            nama: choose(
+              active.nama,
+
+              read(sessionStorage, "cx_nama"),
+
+              stored.nama,
+
+              read(localStorage, "cx_nama"),
+            ),
+
+            telp: choose(
+              active.telp,
+
+              read(sessionStorage, "cx_telp"),
+
+              stored.telp,
+
+              read(localStorage, "cx_telp"),
+            ),
+
+            email: choose(
+              active.email,
+
+              read(sessionStorage, "cx_email"),
+
+              stored.email,
+
+              read(localStorage, "cx_email"),
+            ),
+
+            blok: choose(
+              active.blok,
+
+              read(sessionStorage, "cx_blok"),
+
+              stored.blok,
+
+              read(localStorage, "cx_blok"),
+            ),
+
+            noRumah: choose(
+              active.noRumah,
+
+              read(sessionStorage, "cx_noRumah"),
+
+              stored.noRumah,
+
+              read(localStorage, "cx_noRumah"),
+            ),
+          };
+
+          var ids = {
+            nama: "profileNama",
+
+            telp: "profileTelp",
+
+            email: "profileEmail",
+
+            blok: "profileBlok",
+
+            noRumah: "profileNoRumah",
+          };
+
+          Object.keys(ids).forEach(function (key) {
+            var field = document.getElementById(ids[key]);
+
+            if (field && !field.value && profile[key])
+              field.value = profile[key];
+          });
+
+          var displayName = document.getElementById("profileDisplayName");
+
+          var topbarName = document.getElementById("topbarUsername");
+
+          var firstName = profile.nama
+            ? profile.nama.split(/\s+/)[0]
+            : "Pengguna";
+
+          if (displayName && profile.nama)
+            displayName.textContent = profile.nama;
+
+          if (topbarName) topbarName.textContent = firstName;
+        }
+
+        fillInitialProfile();
+      })();
+    </script>
+
+    <script src="js/navigation.js"></script>
+  </body>
+</html>

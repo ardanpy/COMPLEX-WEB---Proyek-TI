@@ -1,0 +1,872 @@
+<!doctype html>
+
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>COMPLEX — Fasilitas | Layanan Warga</title>
+
+    <meta
+      name="description"
+      content="Pengajuan ambulans, peminjaman lapangan dan mushola, serta peta Cluster Jati Taman Royal 3."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dashboard-shell-alignment.css" />
+
+    <link rel="stylesheet" href="css/fasilitas.css" />
+  </head>
+
+  <body class="dashboard-body">
+    <aside
+      class="sidebar"
+      id="sidebar"
+      role="navigation"
+      aria-label="Menu utama"
+    >
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon" aria-hidden="true">
+          <img
+            class="sidebar-logo-image"
+            src="assets/complex-houselogo.png"
+            alt=""
+            width="34"
+            height="25"
+          />
+        </div>
+
+        <span class="sidebar-logo-text"
+          ><span class="sidebar-logo-main">Comple</span
+          ><span class="sidebar-logo-accent">X</span></span
+        >
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="beranda.html" class="sidebar-nav-item" id="nav-beranda">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+
+          Beranda
+        </a>
+
+        <a href="keamanan.html" class="sidebar-nav-item" id="nav-keamanan">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+
+          Keamanan
+        </a>
+
+        <a
+          href="sigap.html"
+          class="sidebar-nav-item sigap-nav-item"
+          id="nav-sigap"
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+            />
+
+            <line x1="12" y1="9" x2="12" y2="13" />
+
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+
+          SIGAP
+        </a>
+
+        <a href="komunitas.html" class="sidebar-nav-item" id="nav-komunitas">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+
+            <circle cx="9" cy="7" r="4" />
+
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+
+          Komunitas
+        </a>
+
+        <a href="lapor.html" class="sidebar-nav-item" id="nav-lapor">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            />
+
+            <polyline points="14 2 14 8 20 8" />
+
+            <line x1="16" y1="13" x2="8" y2="13" />
+
+            <line x1="16" y1="17" x2="8" y2="17" />
+
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+
+          Lapor
+        </a>
+
+        <a href="kebersihan.html" class="sidebar-nav-item" id="nav-kebersihan">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="3 6 5 6 21 6" />
+
+            <path
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"
+            />
+          </svg>
+
+          Kebersihan
+        </a>
+
+        <a
+          href="fasilitas.html"
+          class="sidebar-nav-item active"
+          id="nav-fasilitas"
+          aria-current="page"
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="3" width="7" height="7" />
+
+            <rect x="14" y="3" width="7" height="7" />
+
+            <rect x="14" y="14" width="7" height="7" />
+
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+
+          Fasilitas
+        </a>
+
+        <a href="notifikasi.html" class="sidebar-nav-item" id="nav-notifikasi">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+
+          Notifikasi
+        </a>
+
+        <a href="profil.html" class="sidebar-nav-item" id="nav-profil">
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+
+          Profil
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a
+          href="index.html"
+          class="sidebar-nav-item sidebar-logout"
+          id="nav-logout"
+        >
+          <svg
+            class="nav-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+
+            <polyline points="16 17 21 12 16 7" />
+
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+
+          Logout
+        </a>
+      </div>
+    </aside>
+
+    <div class="dashboard-main">
+      <header class="topbar" role="banner">
+        <div class="topbar-search">
+          <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+
+          <input
+            type="search"
+            class="topbar-search-input"
+            placeholder="Mau cari fitur apa?"
+            id="searchInput"
+            aria-label="Cari fitur"
+          />
+        </div>
+
+        <div class="topbar-actions">
+          <button
+            class="topbar-action-btn"
+            id="btnMsg"
+            aria-label="Pesan"
+            onclick="showPlaceholder('Pesan')"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+
+              <polyline points="2,4 12,13 22,4" />
+            </svg>
+          </button>
+
+          <button
+            class="topbar-action-btn"
+            id="btnNotif"
+            aria-label="Notifikasi"
+            onclick="
+              window.location.assign('notifikasi.html');
+              return false;
+            "
+          >
+            <span class="notif-dot"></span>
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+          </button>
+
+          <button
+            class="topbar-action-btn"
+            id="btnSettings"
+            aria-label="Pengaturan"
+            onclick="showPlaceholder('Pengaturan')"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="3" />
+
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+              />
+            </svg>
+          </button>
+
+          <a
+            href="profil.html"
+            class="topbar-avatar"
+            id="btnAvatar"
+            aria-label="Buka profil pengguna"
+          >
+            <div class="avatar-circle">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+
+            <span class="topbar-username" id="topbarUsername">Pengguna</span>
+          </a>
+        </div>
+      </header>
+
+      <div class="facility-page">
+        <main class="dashboard-content facility-content" role="main">
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a class="breadcrumb-link" href="beranda.html">Beranda</a>
+
+            <span class="breadcrumb-sep" aria-hidden="true">/</span>
+
+            <span aria-current="page">Fasilitas</span>
+          </nav>
+
+          <section class="facility-hero">
+            <div class="facility-hero-copy">
+              <p class="facility-eyebrow">
+                <span></span> LAYANAN WARGA · CLUSTER JATI
+              </p>
+
+              <h1>Fasilitas Kompleks</h1>
+
+              <p>
+                Ajukan layanan ambulans, gunakan fasilitas bersama, dan temukan
+                area Cluster Jati Taman Royal 3 dari satu halaman.
+              </p>
+            </div>
+
+            <div class="facility-hero-meta">
+              <span class="facility-hero-meta-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11z" />
+
+                  <circle cx="12" cy="10" r="2.5" />
+                </svg>
+              </span>
+
+              <span
+                ><strong>Cluster Jati</strong><small>Taman Royal 3</small></span
+              >
+            </div>
+          </section>
+
+          <section class="facility-service-grid" aria-label="Layanan fasilitas">
+            <article
+              class="facility-service-card service-ambulance"
+              data-service-card="ambulans"
+            >
+              <div class="facility-card-head">
+                <span class="facility-service-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M3 7h11v11H3z" />
+
+                    <path d="M14 11h4l3 3v4h-7z" />
+
+                    <circle cx="7.5" cy="18.5" r="2" />
+
+                    <circle cx="18" cy="18.5" r="2" />
+
+                    <path d="M8.5 10v5M6 12.5h5" />
+                  </svg>
+                </span>
+
+                <span class="facility-service-kicker">LAYANAN KESEHATAN</span>
+              </div>
+
+              <h2>Peminjaman Ambulans</h2>
+
+              <p>
+                Ajukan penggunaan ambulans kompleks untuk kebutuhan medis dan
+                antar-jemput pasien yang telah dikoordinasikan.
+              </p>
+
+              <ul class="facility-benefits">
+                <li><span>✓</span> Isi lokasi jemput dan tujuan</li>
+
+                <li><span>✓</span> Tentukan jadwal kebutuhan</li>
+
+                <li><span>✓</span> Tunggu konfirmasi pengelola</li>
+              </ul>
+
+              <button
+                type="button"
+                class="facility-action-button"
+                data-open-request
+                data-service="ambulans"
+              >
+                Ajukan Ambulans <span aria-hidden="true">→</span>
+              </button>
+
+              <small class="facility-footnote"
+                >Keadaan gawat darurat: hubungi layanan darurat secara langsung,
+                jangan menunggu formulir.</small
+              >
+            </article>
+
+            <article
+              class="facility-service-card service-field"
+              data-service-card="lapangan"
+            >
+              <div class="facility-card-head">
+                <span class="facility-service-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="1" />
+
+                    <path d="M12 3v18M3 12h18" />
+
+                    <circle cx="12" cy="12" r="3.2" />
+
+                    <path d="M3 7h3v3M18 3v3h3M3 17h3v4M18 21v-4h3" />
+                  </svg>
+                </span>
+
+                <span class="facility-service-kicker">FASILITAS OLAHRAGA</span>
+              </div>
+
+              <h2>Peminjaman Lapangan</h2>
+
+              <p>
+                Ajukan jadwal penggunaan lapangan untuk olahraga, latihan,
+                maupun kegiatan bersama warga.
+              </p>
+
+              <ul class="facility-benefits">
+                <li><span>✓</span> Pilih tanggal dan jam penggunaan</li>
+
+                <li><span>✓</span> Cantumkan kegiatan dan peserta</li>
+
+                <li><span>✓</span> Jadwal menunggu persetujuan</li>
+              </ul>
+
+              <button
+                type="button"
+                class="facility-action-button"
+                data-open-request
+                data-service="lapangan"
+              >
+                Pinjam Lapangan <span aria-hidden="true">→</span>
+              </button>
+
+              <small class="facility-footnote"
+                >Penggunaan mengikuti ketersediaan jadwal dan ketentuan
+                pengurus.</small
+              >
+            </article>
+
+            <article
+              class="facility-service-card service-prayer"
+              data-service-card="mushola"
+            >
+              <div class="facility-card-head">
+                <span class="facility-service-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M3 21h18M5 21V9l7-5 7 5v12" />
+
+                    <path d="M9 21v-6h6v6M9 10h.01M15 10h.01" />
+
+                    <path d="M12 4V2" />
+                  </svg>
+                </span>
+
+                <span class="facility-service-kicker">TEMPAT IBADAH</span>
+              </div>
+
+              <h2>Peminjaman Mushola</h2>
+
+              <p>
+                Ajukan penggunaan mushola untuk kajian atau kegiatan keagamaan
+                warga dengan tetap mengutamakan jadwal ibadah.
+              </p>
+
+              <ul class="facility-benefits">
+                <li><span>✓</span> Isi jenis kegiatan dan peserta</li>
+
+                <li><span>✓</span> Pilih tanggal dan waktu</li>
+
+                <li><span>✓</span> Jaga kenyamanan jamaah</li>
+              </ul>
+
+              <button
+                type="button"
+                class="facility-action-button"
+                data-open-request
+                data-service="mushola"
+              >
+                Ajukan Mushola <span aria-hidden="true">→</span>
+              </button>
+
+              <small class="facility-footnote"
+                >Penggunaan mengikuti kesepakatan dan arahan pengurus
+                mushola.</small
+              >
+            </article>
+          </section>
+
+          <section
+            class="facility-map-section"
+            aria-labelledby="facilityMapTitle"
+          >
+            <div class="facility-section-heading">
+              <div>
+                <p class="facility-eyebrow"><span></span> PETUNJUK LOKASI</p>
+
+                <h2 id="facilityMapTitle">Peta Cluster Jati Taman Royal 3</h2>
+
+                <p>
+                  Mulai dari gerbang dan pos security Cluster Jati, lalu gunakan
+                  Google Maps untuk melihat area dan rute lanjutan.
+                </p>
+              </div>
+
+              <a
+                class="facility-map-button"
+                href="https://www.google.com/maps/search/?api=1&query=Cluster+Jati+Taman+Royal+3"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M14 3h7v7" />
+
+                  <path d="M10 14 21 3" />
+
+                  <path
+                    d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6"
+                  />
+                </svg>
+
+                Buka Google Maps
+              </a>
+            </div>
+
+            <div class="facility-map-layout">
+              <div class="facility-map-frame">
+                <iframe
+                  title="Google Maps — Cluster Jati Taman Royal 3"
+                  src="https://www.google.com/maps?q=Cluster+Jati+Taman+Royal+3&output=embed"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  allowfullscreen
+                >
+                </iframe>
+              </div>
+
+              <aside class="facility-map-side">
+                <div class="facility-map-pin">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11z"
+                    />
+
+                    <circle cx="12" cy="10" r="2.5" />
+                  </svg>
+                </div>
+
+                <span class="facility-map-label">TITIK AWAL</span>
+
+                <h3>Gerbang / Pos Security</h3>
+
+                <p>
+                  Jadikan gerbang pos security sebagai titik awal saat membuka
+                  peta kawasan. Untuk mencari penanda pos secara langsung,
+                  gunakan pencarian Google Maps berikut.
+                </p>
+
+                <a
+                  class="facility-map-search-link"
+                  href="https://www.google.com/maps/search/?api=1&query=Pos+Security+Cluster+Jati+Taman+Royal+3"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Cari Pos Security di Maps
+
+                  <span aria-hidden="true">↗</span></a
+                >
+
+                <div class="facility-map-note">
+                  <strong>Catatan akurasi</strong>
+
+                  <span
+                    >Peta ini membuka area Cluster Jati. Pin internal gerbang,
+                    lapangan, dan mushola perlu dicocokkan dengan lokasi resmi
+                    agar tidak salah menandai posisi.</span
+                  >
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section
+            class="facility-requests-section"
+            id="pengajuan-saya"
+            aria-labelledby="facilityRequestsTitle"
+          >
+            <div class="facility-section-heading facility-requests-heading">
+              <div>
+                <p class="facility-eyebrow"><span></span> RIWAYAT LAYANAN</p>
+
+                <h2 id="facilityRequestsTitle">Pengajuan Saya</h2>
+
+                <p>
+                  Pengajuan yang dibuat dari browser ini akan tercatat di sini.
+                </p>
+              </div>
+
+              <a
+                class="facility-history-link"
+                href="notifikasi.html?kategori=Sistem"
+                >Lihat Notifikasi <span aria-hidden="true">→</span></a
+              >
+            </div>
+
+            <div
+              class="facility-request-list"
+              id="facilityRequestList"
+              aria-live="polite"
+            ></div>
+          </section>
+        </main>
+
+        <div class="facility-modal" id="facilityRequestModal" hidden>
+          <div class="facility-modal-backdrop" data-close-request></div>
+
+          <section
+            class="facility-modal-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="facilityModalTitle"
+          >
+            <div class="facility-modal-heading">
+              <div>
+                <p class="facility-eyebrow"><span></span> FORMULIR PENGAJUAN</p>
+
+                <h2 id="facilityModalTitle">Ajukan Peminjaman</h2>
+
+                <p id="facilityModalDescription">
+                  Lengkapi data berikut sebelum mengirim permintaan.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="facility-modal-close"
+                data-close-request
+                aria-label="Tutup formulir"
+              >
+                ×
+              </button>
+            </div>
+
+            <form id="facilityRequestForm">
+              <input
+                type="hidden"
+                name="serviceType"
+                id="facilityServiceType"
+              />
+
+              <div id="facilityFormFields"></div>
+
+              <label class="facility-consent">
+                <input type="checkbox" name="consent" required />
+
+                <span
+                  >Saya memastikan informasi yang diberikan benar dan memahami
+                  bahwa pengajuan menunggu konfirmasi pengurus.</span
+                >
+              </label>
+
+              <div class="facility-form-actions">
+                <button
+                  type="button"
+                  class="facility-cancel-button"
+                  data-close-request
+                >
+                  Batal
+                </button>
+
+                <button type="submit" class="facility-submit-button">
+                  Kirim Pengajuan <span aria-hidden="true">→</span>
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <div class="facility-success-modal" id="facilitySuccessModal" hidden>
+          <div class="facility-modal-backdrop" data-close-success></div>
+
+          <section
+            class="facility-success-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="facilitySuccessTitle"
+          >
+            <div class="facility-success-mark">✓</div>
+
+            <h2 id="facilitySuccessTitle">Pengajuan berhasil dicatat</h2>
+
+            <p id="facilitySuccessText">
+              Pengajuan sudah ditambahkan ke Notifikasi kategori Sistem.
+            </p>
+
+            <a
+              class="facility-submit-button facility-success-notification-link"
+              href="notifikasi.html?kategori=Sistem"
+              >Buka Notifikasi <span aria-hidden="true">→</span></a
+            >
+
+            <button
+              type="button"
+              class="facility-cancel-button"
+              data-close-success
+            >
+              Kembali ke Fasilitas
+            </button>
+          </section>
+        </div>
+
+        <div
+          class="facility-toast"
+          id="facilityToast"
+          role="status"
+          aria-live="polite"
+        ></div>
+      </div>
+
+      <!-- /.facility-page -->
+    </div>
+
+    <!-- /.dashboard-main -->
+
+    <script src="js/app.js"></script>
+
+    <script src="js/complex-profile.js"></script>
+
+    <script src="js/complex-identity-sync.js"></script>
+
+    <script src="js/navigation.js"></script>
+
+    <script src="js/fasilitas.js"></script>
+  </body>
+</html>
