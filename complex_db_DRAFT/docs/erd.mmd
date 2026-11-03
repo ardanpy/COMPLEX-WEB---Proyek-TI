@@ -1,0 +1,68 @@
+erDiagram
+  blocks ||--o{ units : "punya"
+  units  ||--o{ users : "dihuni"
+  users  ||--o{ users : "created_by (admin)"
+  users  ||--o{ sessions : ""
+  users  ||--o{ auth_tokens : ""
+  users  ||--o{ login_attempts : ""
+  users  ||--o{ reports : "melapor"
+  reports ||--o{ report_status_history : ""
+  users  ||--o{ facility_requests : "mengajukan"
+  users  ||--o{ sigap_alerts : "menekan"
+  units  ||--o{ dues_bills : "ditagih"
+  users  ||--o{ announcements : "admin menulis"
+  users  ||--o{ events : "admin menulis"
+  announcements ||--o{ notifications : "fan-out"
+  notifications ||--o{ notification_recipients : ""
+  users  ||--o{ notification_recipients : "penerima"
+  users  ||--o{ posts : "menulis"
+  posts  ||--o{ post_media : "maks 4"
+  posts  ||--o{ post_likes : ""
+  posts  ||--o{ post_comments : ""
+  users  ||--o{ audit_logs : "actor (tanpa FK)"
+
+  users { uuid id PK
+    text email UK
+    text full_name
+    user_role role "admin|warga"
+    user_status status
+    int unit_id FK
+    text password_hash "argon2id/bcrypt"
+    uuid created_by FK "wajib admin" }
+  units { int id PK
+    smallint block_id FK
+    text house_number }
+  blocks { smallint id PK
+    text name "Jati 1..7" }
+  sessions { uuid id PK
+    uuid user_id FK
+    bytea token_hash UK "SHA-256"
+    timestamptz expires_at }
+  reports { uuid id PK
+    uuid reporter_id FK
+    report_category category
+    report_status status
+    report_recipient recipient }
+  facility_requests { uuid id PK
+    facility_type facility
+    request_status status
+    tsrange period "EXCLUDE overlap" }
+  sigap_alerts { uuid id PK
+    sigap_status status
+    uuid user_id FK }
+  dues_bills { uuid id PK
+    int unit_id FK
+    date period
+    bill_status status }
+  notifications { uuid id PK
+    notif_category category
+    text source_key UK }
+  notification_recipients { uuid notification_id PK
+    uuid user_id PK
+    timestamptz read_at }
+  posts { uuid id PK
+    uuid author_id FK
+    text body }
+  audit_logs { bigint id PK
+    text action
+    jsonb details "append-only" }
