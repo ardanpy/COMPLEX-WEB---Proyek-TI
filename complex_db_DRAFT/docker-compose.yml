@@ -1,0 +1,17 @@
+# Opsi tanpa memasang PostgreSQL: hanya untuk pengembangan lokal.
+#   docker compose up -d
+#   PGHOST=localhost PGPORT=5432 PGUSER=postgres PGPASSWORD=postgres ./scripts/setup_local.sh
+services:
+  db:
+    image: postgres:16
+    container_name: complex-db
+    environment:
+      POSTGRES_PASSWORD: postgres        # lokal saja; jangan dipakai di server sungguhan
+    ports: ["127.0.0.1:5432:5432"]       # hanya bisa diakses dari mesin sendiri
+    volumes: [complex_pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      retries: 20
+volumes:
+  complex_pgdata:
