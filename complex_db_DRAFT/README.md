@@ -2,7 +2,7 @@
 
 Basis data untuk web pengelolaan komplek **COMPLEX** (Cluster Jati, Blok Jati 1–7), disusun dari analisis 32 berkas frontend (`Web CompleX.zip`) dan kebutuhan tim backend: **dua role (admin, warga)**, **akun hanya didaftarkan admin**, serta pengamanan terhadap SQL injection dan manipulasi cookie/sesi.
 
-Status: skema lengkap, **91 pengujian otomatis lulus** (`tests/run.sh`). Yang belum ada: API backend, penyimpanan file, pengiriman email (lihat §8).
+Status: skema lengkap, **140 pengujian SQL + 37 simulasi alur login/OTP lulus** (`tests/run.sh`, `tests/run_sim.sh`). Yang belum ada: API backend, penyimpanan file, pengiriman email (lihat §8).
 
 ---
 
@@ -11,7 +11,8 @@ Status: skema lengkap, **91 pengujian otomatis lulus** (`tests/run.sh`). Yang be
 ```bash
 createdb complex
 DB=complex ./scripts/migrate.sh                 # skema + data awal wajib (blok Jati 1–7, slot petugas)
-DB=complex DEV=1 ./scripts/migrate.sh           # + data demo (HANYA dev; password demo: Demo#Password1)
+DB=complex DEV=1 ./scripts/migrate.sh           # + data demo lengkap (HANYA dev; password demo: Demo#Password1)
+DB=complex DEV=accounts ./scripts/migrate.sh    # + hanya 1 admin & 2 warga untuk uji login (password: Complex#Test2026)
 psql -d complex -c "ALTER ROLE complex_app WITH LOGIN PASSWORD '<acak-panjang>'"
 
 # admin pertama (password via prompt, di-hash Argon2id di sisi klien, tidak masuk riwayat shell)
@@ -32,6 +33,11 @@ Aplikasi **hanya** boleh terhubung sebagai `complex_app` (bukan superuser/pemili
 | `db/03_security.sql` | trigger guard, audit append-only, lockout login, notifikasi otomatis, GRANT per kolom |
 | `db/04_rls.sql` | Row Level Security (isolasi data antar pengguna) |
 | `db/05_seed.sql` | data awal wajib (idempoten) |
+| `db/06_user_photo.sql` | kolom foto profil (kunci file buatan server) |
+| `db/07_auth_otp.sql` | OTP email (aktivasi & lupa password), tiket sekali pakai, `activated_at`, fungsi DEFINER |
+| `db/dev/accounts_min.sql` | akun uji: admin, budi (aktif), sari (belum aktif → wajib OTP) |
+| `tests/login_sim.py`, `tests/run_sim.sh` | simulasi backend: login, OTP, lupa password, serangan — 37 asersi |
+| `docs/AUTH_WORKFLOW.md`, `docs/auth_flow.png` | workflow login lengkap + kontrak endpoint |
 | `db/dev/06_demo_seed.sql` | data demo dari contoh di frontend |
 | `docs/erd.png`, `docs/erd.mmd` | diagram relasi |
 
@@ -87,7 +93,7 @@ Aturan ditegakkan di **database**, bukan hanya di API:
 - `complex_app` **tidak dapat** membuat akun admin, mengubah kolom `role`, mengubah `created_by`, maupun menghapus pengguna (GRANT per kolom + trigger). Admin dibuat lewat skrip pemilik DB (`create_admin.sh`). Artinya, bahkan bila aplikasi sepenuhnya dibobol, penyerang tidak bisa mencetak admin baru lewat kredensial aplikasi.
 - Admin aktif terakhir tidak dapat dinonaktifkan/diturunkan.
 - Akun tidak dihapus (FK `RESTRICT`); gunakan `status='nonaktif'` atau `anonymize_user()` untuk hak penghapusan data (data pribadi dibuang, riwayat tetap utuh).
-- Password sementara dari admin: `must_change_password = true`. Tabel `auth_tokens` siap untuk alur reset/aktivasi via email.
+- Login = **email + password** (tanpa NIK, tanpa pihak ketiga). Akun baru dari admin `activated_at IS NULL` (batas 7 hari): login pertama wajib **OTP email** lalu set password sendiri. Lupa password juga lewat OTP email. Detail: `docs/AUTH_WORKFLOW.md`.
 
 ---
 
@@ -162,10 +168,10 @@ Notifikasi otomatis (trigger): laporan dibuat/berubah status, pengajuan fasilita
 ## 8. Belum dicakup (tahap berikutnya)
 
 - API backend (autentikasi, CRUD, validasi, rate-limit, CSRF) dan penyimpanan file media (objek storage; DB hanya menyimpan `storage_key`).
-- Pengiriman email (reset password/aktivasi) dan notifikasi *real-time* (SIGAP butuh push/WebSocket; tabel hanya menyimpan jejaknya).
+- Pengiriman email OTP (DB hanya menyimpan HMAC kode; pepper di env backend) dan notifikasi *real-time* (SIGAP butuh push/WebSocket; tabel hanya menyimpan jejaknya).
 - Kebijakan retensi/arsip `audit_logs` dan `login_attempts` (`fn_purge_expired()` sudah membersihkan sesi/token/percobaan login lama; jadwalkan lewat cron/pg_cron).
 - Backup & enkripsi *at rest*, TLS koneksi DB (`sslmode=verify-full`).
 
 ## 9. Hasil pengujian
 
-`tests/run.sh` membangun DB dari nol dan menjalankan 91 asersi: constraint & guard (13), anti-bentrok jadwal (6), laporan/notifikasi/SIGAP/lockout (12), audit append-only (5), payload injection sebagai parameter (2), hak akses minimal role aplikasi (11), isolasi RLS & guard akun (35), login pra-autentikasi (5), anonimisasi (2). Selama pengujian ditemukan dan diperbaiki tiga cacat: (1) guard salah menganggap superuser sebagai anggota `complex_app`, (2) rentang waktu terbalik pada fasilitas ditolak oleh error mentah `tsrange` alih-alih constraint yang dimaksud, dan (3) warga ternyata masih bisa mengubah `unit_id`/`status` akunnya serta akun orang lain karena `users` tanpa RLS; kini ditutup oleh trigger guard.
+`tests/run.sh` membangun DB dari nol dan menjalankan 140 asersi (95 awal + 45 untuk OTP: kode terkunci setelah 5 salah, kedaluwarsa, replay tiket, batas per jam, hak akses `otp_challenges`/`auth_tokens`, reset oleh admin). `tests/run_sim.sh` menjalankan 37 asersi alur backend. Rincian 95 asersi awal: constraint & guard (13), anti-bentrok jadwal (6), laporan/notifikasi/SIGAP/lockout (12), audit append-only (5), payload injection sebagai parameter (2), hak akses minimal role aplikasi (11), isolasi RLS, guard akun & foto profil (39), login pra-autentikasi (5), anonimisasi (2). Selama pengujian ditemukan dan diperbaiki tiga cacat: (1) guard salah menganggap superuser sebagai anggota `complex_app`, (2) rentang waktu terbalik pada fasilitas ditolak oleh error mentah `tsrange` alih-alih constraint yang dimaksud, dan (3) warga ternyata masih bisa mengubah `unit_id`/`status` akunnya serta akun orang lain karena `users` tanpa RLS; kini ditutup oleh trigger guard.

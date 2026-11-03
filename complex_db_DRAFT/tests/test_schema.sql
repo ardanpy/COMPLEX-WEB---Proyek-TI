@@ -159,6 +159,14 @@ SELECT t.fails('warga tidak bisa mengubah profil warga lain (IDOR)',
   $q$UPDATE users SET full_name='Diretas' WHERE id='00000000-0000-0000-0000-0000000000b1'$q$, 'akunnya sendiri');
 SELECT t.works('warga bisa mengubah nama/telepon akunnya sendiri',
   $q$UPDATE users SET phone='6281211112222' WHERE id='00000000-0000-0000-0000-0000000000b2'$q$);
+SELECT t.works('warga bisa mengisi kunci foto profil (nama dibuat server)',
+  $q$UPDATE users SET photo_storage_key='3f2b8c1e-5a7d-4e9f-8b21-0c4d6e7f8a90.webp' WHERE id='00000000-0000-0000-0000-0000000000b2'$q$);
+SELECT t.fails('kunci foto path traversal ditolak',
+  $q$UPDATE users SET photo_storage_key='../../etc/passwd' WHERE id='00000000-0000-0000-0000-0000000000b2'$q$, 'photo_storage_key');
+SELECT t.fails('kunci foto dengan ekstensi berbahaya (.php) ditolak',
+  $q$UPDATE users SET photo_storage_key='3f2b8c1e-5a7d-4e9f-8b21-0c4d6e7f8a90.php' WHERE id='00000000-0000-0000-0000-0000000000b2'$q$, 'photo_storage_key');
+SELECT t.fails('warga tidak bisa mengganti foto warga lain',
+  $q$UPDATE users SET photo_storage_key='3f2b8c1e-5a7d-4e9f-8b21-0c4d6e7f8a91.png' WHERE id='00000000-0000-0000-0000-0000000000b1'$q$, 'akunnya sendiri');
 SELECT t.assert((SELECT count(*) FROM dues_bills)=1 AND (SELECT unit_id FROM dues_bills)=(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b2'), 'sari hanya melihat tagihan iuran rumahnya');
 
 SELECT set_config('app.user_id',gen_random_uuid()::text,false);
@@ -193,7 +201,90 @@ SELECT t.fails('hash sesi bukan 32 byte ditolak (cegah token mentah tersimpan)',
   $q$INSERT INTO sessions(user_id,token_hash,expires_at) VALUES('00000000-0000-0000-0000-0000000000b1','\x0102','2099-01-01')$q$, 'token_hash');
 RESET ROLE;
 
+
+\echo '=== J. OTP: login pertama, lupa password, serangan ==='
+CREATE FUNCTION t.h(text) RETURNS bytea LANGUAGE sql IMMUTABLE AS $$ SELECT sha256(convert_to($1, 'UTF8')) $$;
+GRANT EXECUTE ON FUNCTION t.h(text) TO complex_app;
+INSERT INTO users(id,email,full_name,password_hash,unit_id,created_by) VALUES
+ ('00000000-0000-0000-0000-0000000000c1','pending@complex.test','Warga Pending','$argon2id$v=19$m=19456,t=2,p=1$aaaa$bbbb',(SELECT min(id) FROM units),'00000000-0000-0000-0000-0000000000a1');
+SELECT t.assert((SELECT activated_at IS NULL FROM users WHERE id='00000000-0000-0000-0000-0000000000c1'), 'akun baru dari admin belum aktif (activated_at NULL)');
+SELECT t.assert(fn_otp_issue('00000000-0000-0000-0000-0000000000b1','activation',t.h('x'))='ineligible', 'OTP aktivasi untuk akun yang sudah aktif ditolak (ineligible)');
+SELECT t.assert(fn_otp_issue('00000000-0000-0000-0000-0000000000c1','password_reset',t.h('x'))='ineligible', 'OTP lupa-password untuk akun belum aktif ditolak');
+SELECT t.assert(fn_otp_issue(gen_random_uuid(),'password_reset',t.h('x'))='ineligible', 'OTP untuk user tak dikenal = ineligible (backend membalas generik)');
+SELECT t.assert(fn_otp_issue('00000000-0000-0000-0000-0000000000c1','activation',t.h('123456'))='ok', 'OTP aktivasi diterbitkan untuk akun belum aktif');
+SELECT t.assert(fn_otp_issue('00000000-0000-0000-0000-0000000000c1','activation',t.h('999999'))='cooldown', 'permintaan ulang <60 dtk ditolak (cooldown)');
+SELECT t.assert(NOT EXISTS(SELECT 1 FROM otp_challenges WHERE row_to_json(otp_challenges)::text LIKE '%123456%'), 'kode OTP tidak tersimpan sebagai plaintext');
+SELECT t.assert(fn_otp_verify('00000000-0000-0000-0000-0000000000c1','activation',t.h('000000'),t.h('T0'))='invalid', 'kode salah -> invalid');
+SELECT t.assert((SELECT attempts FROM otp_challenges WHERE user_id='00000000-0000-0000-0000-0000000000c1' AND consumed_at IS NULL AND invalidated_at IS NULL)=1, 'percobaan salah dihitung (1)');
+SELECT fn_otp_verify('00000000-0000-0000-0000-0000000000c1','activation',t.h('000001'),t.h('T0')) FROM generate_series(1,3);
+SELECT t.assert(fn_otp_verify('00000000-0000-0000-0000-0000000000c1','activation',t.h('000002'),t.h('T0'))='locked', 'kesalahan ke-5 mengunci kode');
+SELECT t.assert(fn_otp_verify('00000000-0000-0000-0000-0000000000c1','activation',t.h('123456'),t.h('T1'))='invalid', 'setelah terkunci, kode BENAR pun ditolak (anti brute force)');
+SELECT t.assert(NOT EXISTS(SELECT 1 FROM auth_tokens WHERE user_id='00000000-0000-0000-0000-0000000000c1'), 'tidak ada tiket terbit dari kode terkunci');
+UPDATE otp_challenges SET created_at = created_at - interval '5 minutes', expires_at = expires_at - interval '5 minutes' WHERE user_id='00000000-0000-0000-0000-0000000000c1';
+SELECT t.assert(fn_otp_issue('00000000-0000-0000-0000-0000000000c1','activation',t.h('654321'))='ok', 'setelah cooldown, kode baru dapat diminta');
+SELECT t.assert(fn_otp_verify('00000000-0000-0000-0000-0000000000c1','activation',t.h('654321'),t.h('TICKET-C1'))='ok', 'kode benar -> ok');
+SELECT t.assert(EXISTS(SELECT 1 FROM auth_tokens WHERE user_id='00000000-0000-0000-0000-0000000000c1' AND purpose='activation' AND used_at IS NULL), 'tiket set-password terbit');
+SELECT t.assert(fn_otp_verify('00000000-0000-0000-0000-0000000000c1','activation',t.h('654321'),t.h('TICKET-C2'))='invalid', 'kode yang sama tidak bisa dipakai dua kali');
+SELECT t.assert(fn_set_password(t.h('TIKET-SALAH'),'$argon2id$v=19$m=19456,t=2,p=1$new$new') IS NULL, 'tiket palsu ditolak');
+SELECT t.fails('hash password baru berbentuk plaintext ditolak oleh DB',
+  $q$SELECT fn_set_password(sha256(convert_to('TICKET-C1','UTF8')),'passwordbaru123')$q$, 'password_hash');
+SELECT t.assert(fn_set_password(t.h('TICKET-C1'),'$argon2id$v=19$m=19456,t=2,p=1$new$new')='00000000-0000-0000-0000-0000000000c1', 'set password dengan tiket valid -> user id');
+SELECT t.assert((SELECT activated_at IS NOT NULL AND password_changed_at IS NOT NULL FROM users WHERE id='00000000-0000-0000-0000-0000000000c1'), 'akun menjadi AKTIF setelah set password');
+SELECT t.assert(fn_set_password(t.h('TICKET-C1'),'$argon2id$v=19$m=19456,t=2,p=1$x$x') IS NULL, 'tiket tidak bisa dipakai ulang (replay)');
+SELECT t.assert(fn_otp_issue('00000000-0000-0000-0000-0000000000c1','activation',t.h('x'))='ineligible', 'akun yang sudah aktif tidak bisa minta OTP aktivasi lagi');
+
+-- lupa password (budi) : kedaluwarsa, pencabutan sesi, batas jam
+INSERT INTO sessions(user_id,token_hash,expires_at) VALUES ('00000000-0000-0000-0000-0000000000b1', t.h('sesi-lama'), now()+interval '8 hours');
+SELECT t.assert(fn_otp_issue('00000000-0000-0000-0000-0000000000b1','password_reset',t.h('111111'))='ok', 'OTP lupa-password diterbitkan untuk akun aktif');
+UPDATE otp_challenges SET created_at = now() - interval '20 minutes', expires_at = now() - interval '10 minutes' WHERE user_id='00000000-0000-0000-0000-0000000000b1';
+SELECT t.assert(fn_otp_verify('00000000-0000-0000-0000-0000000000b1','password_reset',t.h('111111'),t.h('TB0'))='expired', 'kode kedaluwarsa (10 menit) ditolak walau benar');
+SELECT t.assert(fn_otp_issue('00000000-0000-0000-0000-0000000000b1','password_reset',t.h('222222'))='ok', 'kode baru setelah kedaluwarsa');
+SELECT t.assert(fn_otp_verify('00000000-0000-0000-0000-0000000000b1','password_reset',t.h('222222'),t.h('TB1'))='ok', 'verifikasi lupa-password ok');
+SELECT t.assert(fn_otp_verify('00000000-0000-0000-0000-0000000000b1','activation',t.h('222222'),t.h('TB9'))='invalid', 'kode untuk tujuan lain tidak berlaku silang');
+SELECT fn_set_password(t.h('TB1'),'$argon2id$v=19$m=19456,t=2,p=1$b$b');
+SELECT t.assert((SELECT revoked_at IS NOT NULL AND revoked_reason='password_changed' FROM sessions WHERE token_hash=t.h('sesi-lama')), 'ganti password mencabut SEMUA sesi lama');
+-- batas per jam
+DELETE FROM otp_challenges WHERE user_id='00000000-0000-0000-0000-0000000000b3';
+DO $$ BEGIN FOR i IN 1..5 LOOP
+  PERFORM fn_otp_issue('00000000-0000-0000-0000-0000000000b3','password_reset',sha256(convert_to('c'||i,'UTF8')));
+  UPDATE otp_challenges SET created_at = created_at - interval '2 minutes', expires_at = expires_at - interval '2 minutes' WHERE user_id='00000000-0000-0000-0000-0000000000b3';
+END LOOP; END $$;
+SELECT t.assert(fn_otp_issue('00000000-0000-0000-0000-0000000000b3','password_reset',t.h('c6'))='limit', 'batas 5 permintaan OTP per jam ditegakkan (anti spam email)');
+SELECT t.assert(EXISTS(SELECT 1 FROM audit_logs WHERE action IN ('OTP_LOCKED','OTP_FAILED')) AND EXISTS(SELECT 1 FROM audit_logs WHERE action='PASSWORD_SET'), 'audit mencatat OTP gagal/terkunci & set password');
+SELECT t.assert(NOT EXISTS(SELECT 1 FROM audit_logs WHERE details::text LIKE '%654321%' OR details::text LIKE '%123456%'), 'audit tidak memuat kode OTP');
+
+-- sebagai aplikasi
+SET ROLE complex_app;
+RESET app.user_id;
+SELECT t.fails('app tidak bisa SELECT otp_challenges (hash OTP tertutup)', $q$SELECT * FROM otp_challenges$q$, 'permission denied');
+SELECT t.fails('app tidak bisa SELECT auth_tokens', $q$SELECT * FROM auth_tokens$q$, 'permission denied');
+SELECT t.fails('app tidak bisa mencetak tiket sendiri (INSERT auth_tokens)',
+  $q$INSERT INTO auth_tokens(user_id,purpose,token_hash,expires_at) VALUES('00000000-0000-0000-0000-0000000000b1','password_reset',sha256('x'::bytea),now()+interval '5 minutes')$q$, 'permission denied');
+SELECT t.fails('app tidak bisa menandai akun aktif lewat UPDATE',
+  $q$UPDATE users SET activated_at=now() WHERE id='00000000-0000-0000-0000-0000000000b3'$q$, 'permission denied');
+SELECT t.works('app bisa memanggil fn_otp_issue (jalur resmi)', $q$SELECT fn_otp_issue('00000000-0000-0000-0000-0000000000b2','password_reset',sha256('q'::bytea))$q$);
+SELECT t.fails('non-admin tidak bisa fn_admin_reset_password',
+  $q$SELECT fn_admin_reset_password('00000000-0000-0000-0000-0000000000b3','$argon2id$v=19$m=19456,t=2,p=1$t$t')$q$, 'Hanya admin');
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000b3',false);
+SELECT t.fails('warga (sesi sah) tetap tidak bisa fn_admin_reset_password',
+  $q$SELECT fn_admin_reset_password('00000000-0000-0000-0000-0000000000b1','$argon2id$v=19$m=19456,t=2,p=1$t$t')$q$, 'Hanya admin');
+SELECT t.fails('warga tidak bisa anonimkan akun', $q$SELECT anonymize_user('00000000-0000-0000-0000-0000000000b1')$q$, 'Hanya admin');
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000a1',false);
+SELECT t.works('admin mereset password warga (jadi password sementara + aktivasi ulang)',
+  $q$SELECT fn_admin_reset_password('00000000-0000-0000-0000-0000000000b1','$argon2id$v=19$m=19456,t=2,p=1$tmp$tmp')$q$);
+SELECT t.fails('admin tidak bisa mereset password ADMIN lain lewat fungsi ini',
+  $q$SELECT fn_admin_reset_password('00000000-0000-0000-0000-0000000000a1','$argon2id$v=19$m=19456,t=2,p=1$tmp$tmp')$q$, 'tidak ditemukan');
+SELECT t.works('admin (via app) mendaftarkan warga: activated_at dipaksa NULL walau dicoba diisi',
+  $q$INSERT INTO users(email,full_name,phone,unit_id,password_hash,activated_at,created_by) VALUES('licik@complex.test','Warga Licik','6281200000077',(SELECT min(id) FROM units),'$argon2id$v=19$m=19456,t=2,p=1$z$z',now(),'00000000-0000-0000-0000-0000000000a1')$q$);
+SELECT t.assert((SELECT activated_at IS NULL FROM users WHERE email='licik@complex.test'), 'aplikasi tidak bisa melompati OTP lewat INSERT akun aktif');
+RESET app.user_id;
+RESET ROLE;
+SELECT t.assert((SELECT activated_at IS NULL AND activation_expires_at > now() FROM users WHERE id='00000000-0000-0000-0000-0000000000b1'), 'setelah reset admin: budi wajib aktivasi ulang, batas 7 hari');
+SELECT t.assert((SELECT count(*) FROM audit_logs WHERE action='PASSWORD_RESET_BY_ADMIN')=1, 'reset oleh admin tercatat di audit');
+
 \echo '=== I. Anonimisasi ==='
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000a1',false);
 SELECT anonymize_user('00000000-0000-0000-0000-0000000000b2');
+RESET app.user_id;
 SELECT t.assert((SELECT email LIKE 'removed-%@anonymized.invalid' AND phone IS NULL AND status='nonaktif' AND full_name='Warga Nonaktif' FROM users WHERE id='00000000-0000-0000-0000-0000000000b2'), 'data pribadi dianonimkan');
 SELECT t.assert((SELECT count(*) FROM reports WHERE reporter_id='00000000-0000-0000-0000-0000000000b2')>0, 'riwayat laporan tetap utuh setelah anonimisasi');

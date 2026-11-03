@@ -2,20 +2,20 @@
 -- DATA DEMO — HANYA UNTUK DEVELOPMENT. Memetakan data contoh di frontend.
 -- Semua akun demo berpassword:  Demo#Password1   (bcrypt cost 4, bukan untuk produksi)
 -- =====================================================================
-INSERT INTO users (id, email, full_name, role, password_hash, must_change_password)
+INSERT INTO users (id, email, full_name, role, password_hash, activated_at)
 VALUES ('00000000-0000-0000-0000-0000000000a1', 'admin@complex.test', 'Pengurus Admin', 'admin',
-        crypt('Demo#Password1', gen_salt('bf', 4)), false);
+        crypt('Demo#Password1', gen_salt('bf', 4)), now());
 
 INSERT INTO units (block_id, house_number)
 SELECT b.id, h FROM blocks b, (VALUES ('52'), ('15'), ('7')) v(h) WHERE b.name IN ('Jati 1', 'Jati 2', 'Jati 3');
 
-INSERT INTO users (id, email, full_name, phone, unit_id, password_hash, must_change_password, created_by) VALUES
+INSERT INTO users (id, email, full_name, phone, unit_id, password_hash, activated_at, created_by) VALUES
  ('00000000-0000-0000-0000-0000000000b1', 'budi@complex.test',  'Budi Santoso',  '6281200000001',
-    (SELECT u.id FROM units u JOIN blocks b ON b.id=u.block_id WHERE b.name='Jati 1' AND u.house_number='52'), crypt('Demo#Password1', gen_salt('bf', 4)), false, '00000000-0000-0000-0000-0000000000a1'),
+    (SELECT u.id FROM units u JOIN blocks b ON b.id=u.block_id WHERE b.name='Jati 1' AND u.house_number='52'), crypt('Demo#Password1', gen_salt('bf', 4)), now(), '00000000-0000-0000-0000-0000000000a1'),
  ('00000000-0000-0000-0000-0000000000b2', 'sari@complex.test',  'Sari Wulandari','6281200000002',
-    (SELECT u.id FROM units u JOIN blocks b ON b.id=u.block_id WHERE b.name='Jati 2' AND u.house_number='15'), crypt('Demo#Password1', gen_salt('bf', 4)), false, '00000000-0000-0000-0000-0000000000a1'),
+    (SELECT u.id FROM units u JOIN blocks b ON b.id=u.block_id WHERE b.name='Jati 2' AND u.house_number='15'), crypt('Demo#Password1', gen_salt('bf', 4)), now(), '00000000-0000-0000-0000-0000000000a1'),
  ('00000000-0000-0000-0000-0000000000b3', 'andre@complex.test', 'Andre Pratama', '6281200000003',
-    (SELECT u.id FROM units u JOIN blocks b ON b.id=u.block_id WHERE b.name='Jati 3' AND u.house_number='7'),  crypt('Demo#Password1', gen_salt('bf', 4)), false, '00000000-0000-0000-0000-0000000000a1');
+    (SELECT u.id FROM units u JOIN blocks b ON b.id=u.block_id WHERE b.name='Jati 3' AND u.house_number='7'),  crypt('Demo#Password1', gen_salt('bf', 4)), now(), '00000000-0000-0000-0000-0000000000a1');
 
 UPDATE security_guards SET name = 'Pak Hendra', phone = '6281300000001' WHERE slot = 1;
 UPDATE security_guards SET name = 'Pak Joko',   phone = '6281300000002' WHERE slot = 2;

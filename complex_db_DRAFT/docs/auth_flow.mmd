@@ -1,0 +1,28 @@
+sequenceDiagram
+  autonumber
+  participant W as Warga (browser)
+  participant B as Backend
+  participant D as PostgreSQL
+  participant M as Email
+  Note over W,M: A. Login pertama (akun dibuat admin)
+  W->>B: POST /auth/login (email + password sementara)
+  B->>D: SELECT user WHERE email=$1
+  B->>B: Argon2id verify (waktu disamakan)
+  B-->>W: 200 {next: otp} (BELUM ada sesi)
+  B->>D: fn_otp_issue(user, activation, HMAC(kode))
+  B->>M: kirim kode 6 digit (tanpa password)
+  W->>B: POST /auth/activate/verify-otp (email, kode)
+  B->>D: fn_otp_verify(...) -> ok + tiket 10 menit
+  B-->>W: tiket (sekali pakai)
+  W->>B: POST /auth/set-password (tiket, password baru >=12)
+  B->>D: fn_set_password(hash tiket, Argon2id baru)
+  Note right of D: akun aktif, sesi lama dicabut, audit
+  W->>B: POST /auth/login (password baru)
+  B->>D: INSERT sessions (SHA-256 token)
+  B-->>W: Set-Cookie HttpOnly Secure SameSite
+  Note over W,M: B. Lupa password
+  W->>B: POST /auth/forgot (email)
+  B-->>W: respons generik (sama untuk email apa pun)
+  B->>D: fn_otp_issue(user, password_reset, ...)
+  B->>M: kode 6 digit (hanya jika akun aktif)
+  W->>B: verify-otp -> tiket -> set-password
