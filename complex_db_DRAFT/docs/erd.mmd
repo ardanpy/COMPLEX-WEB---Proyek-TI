@@ -16,18 +16,18 @@ erDiagram
   notifications ||--o{ notification_recipients : ""
   users  ||--o{ notification_recipients : "penerima"
   users  ||--o{ posts : "menulis"
-  users  ||--o{ guest_visits : "melapor tamu"
-  units  ||--o{ guest_visits : "rumah tujuan"
+  users  ||--o{ guest_visits : "warga melapor tamunya"
+  units  ||--o{ guest_visits : "rumah tujuan (opsional)"
+  guest_sessions ||--o{ guest_visits : "tamu anonim 24 jam"
   posts  ||--o{ post_media : "maks 4"
   posts  ||--o{ post_likes : ""
   posts  ||--o{ post_comments : ""
   users  ||--o{ audit_logs : "actor (tanpa FK)"
 
   users { uuid id PK
-    timestamptz access_expires_at "wajib utk guest, maks 7 hari"
     text email UK
     text full_name
-    user_role role "admin|warga|guest"
+    user_role role "admin|warga"
     user_status status
     int unit_id FK
     text password_hash "argon2id/bcrypt"
@@ -70,14 +70,22 @@ erDiagram
     text action
     jsonb details "append-only" }
 
+
+  guest_sessions { uuid id PK
+    bytea token_hash UK "SHA-256 cookie"
+    inet ip
+    timestamptz expires_at "maks 24 jam"
+  }
   guest_visits { uuid id PK
-    uuid reporter_id FK
-    uuid guest_user_id FK
+    uuid reporter_id FK "warga/admin, NULL bila tamu"
+    uuid guest_session_id "tamu anonim"
     text visitor_name
-    text visitor_address "alamat asal tamu"
-    int host_unit_id FK "rumah tujuan"
-    text host_name "warga tujuan (opsional)"
-    timestamptz visit_start
+    text visitor_address "alamat asal"
+    smallint host_block_id FK
+    text host_house "nomor rumah tujuan"
+    int host_unit_id FK "bila terdaftar"
+    text host_name "warga tujuan"
+    text purpose
     timestamptz valid_until "visit_start + 24 jam (trigger)"
     visit_status status "aktif|selesai|dibatalkan"
   }

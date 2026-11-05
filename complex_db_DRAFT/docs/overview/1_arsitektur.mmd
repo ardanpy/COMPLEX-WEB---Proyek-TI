@@ -1,0 +1,39 @@
+flowchart TB
+  classDef done fill:#d9f2e3,stroke:#1f8a4c,color:#0b3d22
+  classDef todo fill:#fff4d6,stroke:#c98a00,stroke-dasharray:5 4,color:#5a3d00
+  classDef ext fill:#e8eefc,stroke:#4a64b3,color:#1d2a5c
+
+  subgraph FE["FRONTEND (HTML/JS dari tim)"]
+    direction LR
+    F1["Halaman admin / warga / tamu<br/>(belum dibuat per peran)"]:::todo
+  end
+
+  subgraph API["BACKEND API (belum dibuat)"]
+    direction LR
+    A0["Middleware: cek cookie → fn_session_user<br/>set app.user_id per transaksi<br/>CSRF · rate limit"]:::todo
+    A1["Auth: /login /activate /forgot /set-password /logout"]:::todo
+    A2["GET /home → fn_home()  (admin, warga)"]:::todo
+    A2b["Tamu tanpa login: /guest/start /guest/home<br/>/guest/report → fn_guest_*  (cookie guest_sid 24 jam)"]:::todo
+    A3["Lapor Tamu · Laporan · Fasilitas · SIGAP<br/>Iuran · Komunitas · Notifikasi · Pengumuman/Acara<br/>Profil & foto · Kelola akun (admin)"]:::todo
+  end
+
+  subgraph DB["POSTGRESQL 16 (sudah jadi · 191 tes SQL + 49 simulasi lulus)"]
+    direction LR
+    D1["24 tabel + enum + constraint<br/>(users, sessions, otp, laporan, fasilitas, SIGAP,<br/>iuran, komunitas, guest_visits, audit_logs ...)"]:::done
+    D2["Keamanan: role complex_app (hak minimal) · RLS (admin, warga)
+        tamu anonim hanya lewat fungsi · anti-spam per IP<br/>trigger guard · audit append-only · lockout 5x/15 mnt<br/>Argon2id hash dari backend · OTP = HMAC"]:::done
+    D3["Fungsi siap pakai: fn_session_user · fn_home · fn_guest_*<br/>fn_otp_issue/verify · fn_set_password<br/>fn_admin_reset_password · fn_login_failed/succeeded"]:::done
+    D4["Otomatis di DB: notifikasi (pengumuman, laporan, SIGAP,<br/>fasilitas, lapor tamu) · riwayat status · anti-bentrok jadwal<br/>Lapor Tamu 24 jam"]:::done
+  end
+
+  subgraph EXT["LAYANAN LUAR (belum)"]
+    direction LR
+    E1["Email (kirim OTP)"]:::todo
+    E2["Penyimpanan file<br/>foto profil & media komunitas"]:::todo
+    E3["Push / realtime SIGAP"]:::todo
+  end
+
+  FE -->|"HTTPS + cookie HttpOnly"| API
+  API -->|"query terparameter sebagai role complex_app"| DB
+  API -->|"kirim OTP · simpan file · push"| EXT
+  DB -.->|"hanya simpan storage_key"| EXT

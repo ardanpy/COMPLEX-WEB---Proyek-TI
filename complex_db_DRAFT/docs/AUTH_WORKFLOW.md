@@ -17,8 +17,8 @@ Diagram: `docs/auth_flow.png` (sumber `docs/auth_flow.mmd`).
 | `POST /auth/forgot` | `fn_otp_issue(.., 'password_reset', ..)` | respons SELALU generik |
 | `POST /auth/{activate,reset}/verify-otp` | `fn_otp_verify` | `ok` → kembalikan tiket acak (DB simpan SHA-256-nya) |
 | `POST /auth/set-password` | `fn_set_password` | backend hash Argon2id, kebijakan ≥ 12 karakter |
-| `GET /auth/me` | `fn_session_user(sha256(cookie))` | satu pintu: cek sesi, status, aktivasi, masa akses tamu |
-| `GET /home` | `fn_home()` (set `app.user_id` dulu) | beranda sesuai role, lihat `docs/ROLES_AND_HOME.md` |
+| `GET /auth/me` | `fn_session_user(sha256(cookie))` | satu pintu: cek sesi, status, aktivasi |
+| `GET /home` | `fn_home()` (set `app.user_id` dulu) | beranda admin/warga; **tamu tanpa login** memakai `fn_guest_*`, lihat `docs/ROLES_AND_HOME.md` |
 | `POST /auth/logout`, `POST /auth/change-password` | `sessions`, `users` | role selalu dari DB |
 | `POST /admin/users/:id/reset-password` | `fn_admin_reset_password` | password sementara dibuat backend, dikirim admin lewat jalur lain, bukan email |
 
@@ -41,4 +41,4 @@ Ke klien semuanya diterjemahkan menjadi pesan generik (jangan bedakan "email tak
 6. Admin pertama dibuat lewat `scripts/create_admin.sh` oleh pemilik DB.
 
 ## Pengujian
-`tests/run.sh` (191 asersi SQL) dan `tests/run_sim.sh` (49 asersi alur backend + serangan). Sim selalu membuat DB baru karena mengubah data.
+`tests/run.sh` (195 asersi SQL) dan `tests/run_sim.sh` (55 asersi alur backend + serangan). Sim selalu membuat DB baru karena mengubah data.

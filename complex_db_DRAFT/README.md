@@ -2,7 +2,7 @@
 
 Basis data untuk web pengelolaan komplek **COMPLEX** (Cluster Jati, Blok Jati 1–7), disusun dari analisis 32 berkas frontend (`Web CompleX.zip`) dan kebutuhan tim backend: **dua role (admin, warga)**, **akun hanya didaftarkan admin**, serta pengamanan terhadap SQL injection dan manipulasi cookie/sesi.
 
-Status: skema lengkap, **191 pengujian SQL + 49 simulasi alur login/OTP/beranda lulus** (`tests/run.sh`, `tests/run_sim.sh`). Yang belum ada: API backend, penyimpanan file, pengiriman email (lihat §8).
+Status: skema lengkap, **195 pengujian SQL + 55 simulasi alur login/OTP/beranda lulus** (`tests/run.sh`, `tests/run_sim.sh`). Yang belum ada: API backend, penyimpanan file, pengiriman email (lihat §8).
 
 ---
 
@@ -36,11 +36,12 @@ Aplikasi **hanya** boleh terhubung sebagai `complex_app` (bukan superuser/pemili
 | `db/04_rls.sql` | Row Level Security (isolasi data antar pengguna) |
 | `db/05_seed.sql` | data awal wajib (idempoten) |
 | `db/06_user_photo.sql` | kolom foto profil (kunci file buatan server) |
-| `db/08_guest_role.sql` | role `guest`, `access_expires_at`, Lapor Tamu 1x24 jam (`guest_visits`), RLS dikencangkan, `fn_home()`, `fn_session_user()` |
+| `db/08_guest_session.sql` | tamu tanpa akun (sesi anonim 24 jam), Lapor Tamu 1x24 jam, anti-spam per IP, `fn_home()`, `fn_session_user()`, guard pembuatan akun hanya admin |
 | `db/07_auth_otp.sql` | OTP email (aktivasi & lupa password), tiket sekali pakai, `activated_at`, fungsi DEFINER |
 | `db/dev/accounts_min.sql` | akun uji: admin, budi (aktif), sari (belum aktif → wajib OTP) |
-| `tests/login_sim.py`, `tests/run_sim.sh` | simulasi backend: login, OTP, lupa password, tamu, beranda per role, serangan — 49 asersi |
-| `docs/ROLES_AND_HOME.md` | matriks hak 3 role, kontrak beranda per role, aturan Lapor Tamu |
+| `tests/login_sim.py`, `tests/run_sim.sh` | simulasi backend: login, OTP, lupa password, tamu anonim, beranda per peran, serangan — 55 asersi |
+| `docs/overview/*.png` (+ `.mmd`) | gambar ikhtisar: arsitektur sudah/belum, alur akun-login-beranda, alur status tiap fitur |
+| `docs/ROLES_AND_HOME.md` | peran admin/warga/tamu, matriks hak, kontrak beranda, aturan Lapor Tamu & anti-spam |
 | `docs/TESTING.md`, `requirements-dev.txt` | cara menjalankan & menambah tes di lokal |
 | `docs/SETUP_LOCAL.md`, `scripts/setup_local.sh`, `docker-compose.yml` | setup DB lokal satu perintah + opsi Docker |
 | `docs/AUTH_WORKFLOW.md`, `docs/auth_flow.png` | workflow login lengkap + kontrak endpoint |
@@ -91,9 +92,9 @@ Firestore/MongoDB kurang cocok (relasi banyak, butuh constraint dan transaksi li
 
 ---
 
-## 4. Model akses: tiga role (admin, warga, guest) & "hanya admin yang mendaftarkan"
+## 4. Model akses: admin & warga berakun, tamu tanpa akun (sesi anonim) & "hanya admin yang mendaftarkan akun"
 
-> Role `guest` (tamu), matriks hak, Lapor Tamu 1x24 jam, dan kontrak beranda per role: **`docs/ROLES_AND_HOME.md`**.
+> Tamu (sesi anonim tanpa akun), matriks hak, Lapor Tamu 1x24 jam, anti-spam, dan kontrak beranda: **`docs/ROLES_AND_HOME.md`**.
 
 Aturan ditegakkan di **database**, bukan hanya di API:
 
@@ -182,4 +183,4 @@ Notifikasi otomatis (trigger): laporan dibuat/berubah status, pengajuan fasilita
 
 ## 9. Hasil pengujian
 
-`tests/run.sh` membangun DB dari nol dan menjalankan 191 asersi (95 awal + 45 untuk OTP + 51 untuk role guest/Lapor Tamu/beranda; OTP: kode terkunci setelah 5 salah, kedaluwarsa, replay tiket, batas per jam, hak akses `otp_challenges`/`auth_tokens`, reset oleh admin). Bagian guest (K): batas akses 7 hari, hanya admin boleh membuat akun, tamu tak bisa menyentuh tabel selain beranda, Lapor Tamu 24 jam dihitung DB, isolasi antar rumah, notifikasi, kedaluwarsa, beranda per role. `tests/run_sim.sh` menjalankan 49 asersi alur backend. Rincian 95 asersi awal: constraint & guard (13), anti-bentrok jadwal (6), laporan/notifikasi/SIGAP/lockout (12), audit append-only (5), payload injection sebagai parameter (2), hak akses minimal role aplikasi (11), isolasi RLS, guard akun & foto profil (39), login pra-autentikasi (5), anonimisasi (2). Selama pengujian ditemukan dan diperbaiki tiga cacat: (1) guard salah menganggap superuser sebagai anggota `complex_app`, (2) rentang waktu terbalik pada fasilitas ditolak oleh error mentah `tsrange` alih-alih constraint yang dimaksud, dan (3) warga ternyata masih bisa mengubah `unit_id`/`status` akunnya serta akun orang lain karena `users` tanpa RLS; kini ditutup oleh trigger guard.
+`tests/run.sh` membangun DB dari nol dan menjalankan 195 asersi (95 awal + 45 untuk OTP + 55 untuk tamu anonim/Lapor Tamu/anti-spam/beranda; OTP: kode terkunci setelah 5 salah, kedaluwarsa, replay tiket, batas per jam, hak akses `otp_challenges`/`auth_tokens`, reset oleh admin). Bagian tamu (K): sesi anonim tanpa akun, tamu hanya lewat fungsi (tanpa akses tabel), berita komplek saja, Lapor Tamu 24 jam dihitung DB, batas per sesi/IP, isolasi antar sesi dan antar rumah, notifikasi, kedaluwarsa, purge, beranda per peran, hanya admin yang boleh membuat akun. `tests/run_sim.sh` menjalankan 55 asersi alur backend. Rincian 95 asersi awal: constraint & guard (13), anti-bentrok jadwal (6), laporan/notifikasi/SIGAP/lockout (12), audit append-only (5), payload injection sebagai parameter (2), hak akses minimal role aplikasi (11), isolasi RLS, guard akun & foto profil (39), login pra-autentikasi (5), anonimisasi (2). Selama pengujian ditemukan dan diperbaiki tiga cacat: (1) guard salah menganggap superuser sebagai anggota `complex_app`, (2) rentang waktu terbalik pada fasilitas ditolak oleh error mentah `tsrange` alih-alih constraint yang dimaksud, dan (3) warga ternyata masih bisa mengubah `unit_id`/`status` akunnya serta akun orang lain karena `users` tanpa RLS; kini ditutup oleh trigger guard.

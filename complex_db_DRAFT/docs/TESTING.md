@@ -4,8 +4,8 @@ Ada dua rangkaian tes. Keduanya **membangun database sementara sendiri** dari no
 
 | Tes | Perintah | Isi | Hasil yang diharapkan |
 |---|---|---|---|
-| Skema & keamanan (SQL) | `tests/run.sh` | 191 asersi langsung di PostgreSQL | `LULUS: 191   GAGAL: 0   ERROR-TAK-TERDUGA: 0` |
-| Alur login backend (Python) | `tests/run_sim.sh` | 49 asersi: login, OTP, lupa password, tamu, beranda per role, injeksi, hak akses | `LULUS 49 / 49` |
+| Skema & keamanan (SQL) | `tests/run.sh` | 195 asersi langsung di PostgreSQL | `LULUS: 195   GAGAL: 0   ERROR-TAK-TERDUGA: 0` |
+| Alur login backend (Python) | `tests/run_sim.sh` | 55 asersi: login, OTP, lupa password, tamu anonim, beranda per peran, injeksi, hak akses | `LULUS 55 / 55` |
 
 ## 1. Prasyarat
 1. PostgreSQL 16 berjalan (lihat `docs/SETUP_LOCAL.md` bagian 1).
@@ -36,7 +36,7 @@ Yang terjadi: `dropdb/createdb complex_test` → migrasi 01–07 + data demo (`D
 | G | RLS: isolasi data antar warga |
 | H | login pra-autentikasi sebagai aplikasi |
 | J | OTP: kedaluwarsa, 5 salah → terkunci, replay tiket, batas per jam, reset oleh admin |
-| K | role guest: batas akses, RLS, Lapor Tamu 24 jam, notifikasi, kedaluwarsa, beranda per role |
+| K | tamu tanpa akun: sesi anonim, hanya lewat fungsi, berita komplek saja, Lapor Tamu 24 jam, anti-spam, isolasi, notifikasi, kedaluwarsa & purge, beranda per peran |
 | I | anonimisasi data pribadi |
 
 Opsi: `DB=nama_lain ./tests/run.sh` untuk nama DB sementara berbeda. Kode keluar `0` bila semua lulus (cocok untuk CI).

@@ -1,0 +1,32 @@
+flowchart TD
+  classDef adm fill:#e8eefc,stroke:#4a64b3,color:#1d2a5c
+  classDef sys fill:#d9f2e3,stroke:#1f8a4c,color:#0b3d22
+  classDef bad fill:#fde4e4,stroke:#b33a3a,color:#5c1d1d
+
+  A["Admin mendaftarkan akun WARGA<br/>(wajib rumah) · password sementara dibuat backend"]:::adm --> S0["Status: BELUM AKTIF<br/>(activated_at kosong, batas aktivasi 7 hari)"]:::sys
+
+  S0 --> L1["Login pertama: email + password sementara"]
+  L1 -->|salah| X1["401 pesan generik<br/>hitung gagal · 5x = kunci 15 menit"]:::bad
+  L1 -->|benar, BELUM ada sesi| O1["Backend kirim OTP 6 digit ke email<br/>(DB simpan HMAC · cooldown 60 dtk · maks 5/jam)"]:::sys
+  O1 --> V1{"Verifikasi OTP<br/>berlaku 10 menit"}
+  V1 -->|"salah 5x → kode terkunci"| X2["Minta kode baru"]:::bad
+  V1 -->|benar| T1["Tiket sekali pakai 10 menit"]:::sys
+  T1 --> P1["Set password baru (≥ 12 karakter)<br/>akun AKTIF · semua sesi lama dicabut"]:::sys
+
+  P1 --> N["Login normal: email + password"]
+  FP["Lupa password: input email<br/>respons selalu generik"] --> O2["OTP dikirim hanya jika akun aktif"]:::sys --> V1
+  AR["Admin reset password warga"]:::adm -->|jadi BELUM AKTIF lagi| S0
+
+  N -->|benar| SES["Sesi server-side<br/>cookie opaque, DB simpan SHA-256<br/>"]:::sys
+  N -->|salah| X1
+
+  SES --> R{"fn_session_user → role dari DB"}
+  R -->|admin| H1["beranda_admin<br/>statistik: laporan baru/diproses, fasilitas menunggu,<br/>SIGAP terbuka, iuran verifikasi, tamu aktif,<br/>akun belum aktif, notifikasi + pengumuman & acara"]
+  R -->|warga| H2["beranda_warga<br/>notifikasi belum dibaca, laporan saya,<br/>fasilitas menunggu, iuran belum lunas,<br/>tamu di rumah saya + pengumuman & acara"]
+
+  V["Pengunjung (tanpa akun, tanpa admin)<br/>tombol Masuk sebagai tamu"]:::sys --> GS["Backend buat cookie guest_sid acak<br/>fn_guest_session_start · maks 20 sesi/IP/jam<br/>berlaku 24 jam"]:::sys --> H3["beranda_tamu<br/>berita komplek (kategori komplek saja)<br/>+ tombol utama LAPOR TAMU"]
+  H3 --> G1["Form: nama · alamat · rumah tujuan<br/>· warga tujuan (opsional) · keperluan"]
+  G1 --> G2["Laporan aktif tepat 24 jam (dihitung DB)<br/>admin + penghuni rumah tujuan dinotifikasi"]:::sys
+  G2 --> G3["selesai / dibatalkan / otomatis tidak aktif setelah 24 jam<br/>perpanjang = buat laporan baru · maks 1 aktif per sesi · 3 laporan/IP/jam"]
+
+  EXP["Cookie tamu habis (24 jam)"]:::bad -.->|"sesi tak dikenali, tidak bisa lapor<br/>mulai sesi baru bila perlu"| H3

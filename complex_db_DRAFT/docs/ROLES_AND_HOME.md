@@ -1,81 +1,97 @@
-# Role, Hak Akses, dan Beranda per Role
+# Peran, Hak Akses, dan Beranda
 
-Halaman frontend belum ada untuk tiap role, jadi dokumen ini hanya mengikat **data & hak akses**. Pemetaan ke halaman menyusul.
-Semua aturan ditegakkan di DB (RLS + trigger); backend tetap wajib mengecek, tetapi bug otorisasi tidak membocorkan data lintas role.
+Halaman frontend per peran belum ada, jadi dokumen ini hanya mengikat **data & hak akses**; pemetaan ke halaman menyusul.
+Aturan ditegakkan di DB (RLS, trigger, fungsi); backend tetap wajib mengecek, tetapi bug otorisasi tidak membocorkan data lintas peran.
 
-## 1. Tiga role
-| | admin | warga | guest (tamu) |
+## 1. Tiga peran: dua berakun, satu anonim
+| | admin | warga | tamu |
 |---|---|---|---|
-| Dibuat oleh | skrip pemilik DB (admin pertama) / admin | admin | admin |
-| Punya rumah (`unit_id`) | tidak | wajib | **tidak boleh** (tujuan dipilih per laporan) |
-| Masa berlaku | tanpa batas | tanpa batas | `access_expires_at`, maks 7 hari dari saat diset |
-| Login pertama | OTP email | OTP email | OTP email |
+| Punya akun (`users`) | ya | ya | **tidak** |
+| Dibuat oleh | skrip pemilik DB / admin | admin | tidak perlu didaftarkan siapa pun |
+| Login | email + password (+ OTP login pertama & lupa password) | sama | **tanpa login**: tombol "Masuk sebagai tamu" |
+| Identitas | cookie sesi akun | cookie sesi akun | cookie sesi tamu `guest_sid` (acak, berlaku **24 jam**, habis = selesai) |
+| Rumah (`unit_id`) | tidak | wajib | tidak ada (tujuan dipilih per laporan) |
 
-## 2. Matriks hak (yang ditegakkan DB)
-| Data | admin | warga | guest |
+## 2. Matriks hak (ditegakkan DB)
+| Data / aksi | admin | warga | tamu |
 |---|---|---|---|
-| Pengumuman, acara (beranda) | baca + kelola | baca | **baca** |
-| Blok & rumah (referensi) | baca + kelola | baca | **baca** (untuk memilih rumah tujuan) |
-| Lapor Tamu | semua | milik sendiri + tamu rumahnya | **hanya milik sendiri** |
-| Laporan warga, komunitas, fasilitas, SIGAP, iuran, satpam, daftar anggota | sesuai fitur | sesuai fitur | **tidak ada akses** |
-| Notifikasi | miliknya | miliknya | tidak menerima (pengumuman tidak di-fanout ke tamu) |
-| Ubah profil sendiri | ya | ya | ya (nama, telepon, foto) |
-| Ubah masa akses / rumah / status akun | ya | tidak | tidak |
-| Mendaftarkan akun | ya | tidak | tidak |
+| Berita komplek (pengumuman kategori `komplek`) | baca + kelola | baca (semua kategori) | **baca** (hanya `komplek`) |
+| Acara, pengumuman pengurus/keamanan/kebersihan | ya | ya | tidak |
+| Lapor Tamu | lihat semua | buat untuk rumahnya, lihat tamu rumahnya | **buat, lihat, akhiri milik sesinya sendiri** |
+| Laporan warga, komunitas, fasilitas, SIGAP, iuran, satpam, daftar anggota | sesuai fitur | sesuai fitur | tidak ada akses |
+| Notifikasi | ya | ya | tidak |
+| Mendaftarkan akun, mengubah rumah/status akun | admin saja | tidak | tidak |
 
-Tamu yang masa aksesnya lewat dianggap **tidak ada** oleh RLS walau cookie/sesi lamanya belum dibuang (cek langsung ke `users.access_expires_at`).
+Tamu **tidak punya `user_id`**, sehingga tidak lolos policy RLS mana pun. Satu-satunya jalan masuknya adalah lima fungsi publik (bagian 4). Role aplikasi tidak bisa membaca `guest_sessions`.
 
-## 3. Lapor Tamu 1x24 jam (`guest_visits`)
-Beranda tamu hanya berisi berita komplek dan satu tombol utama **Lapor Tamu**. Pemetaan kolom form:
+## 3. Lapor Tamu 1x24 jam
+Beranda tamu berisi **berita komplek** dan satu tombol utama **Lapor Tamu**. Pemetaan form:
 | Isian form | Kolom | Catatan |
 |---|---|---|
 | Nama | `visitor_name` | wajib |
 | Alamat | `visitor_address` | alamat asal tamu, wajib |
-| Tujuan: rumah | `host_unit_id` | dipilih dari blok + nomor rumah (`blocks`/`units` dapat dibaca tamu), wajib |
-| Tujuan: warga | `host_name` | teks bebas, opsional; daftar warga **tidak** dibuka ke tamu (privasi) |
+| Tujuan: blok + nomor rumah | `host_block_id`, `host_house` | blok dari daftar (`fn_guest_home().blocks`), nomor diketik; dinormalisasi (huruf besar, spasi dibuang) |
+| Tujuan: warga | `host_name` | teks bebas, opsional (daftar warga tidak dibuka ke tamu) |
 | Keperluan | `purpose` | wajib |
-| (opsional) | `visitor_phone`, `vehicle_plate`, `visit_start` | |
+| Opsional | `visitor_phone`, `vehicle_plate`, `visit_start` | |
 
-- Pelapor: tamu (rumah tujuan bebas dipilih), warga (untuk tamunya; rumah tujuan wajib rumahnya sendiri), atau admin.
-- `valid_until = visit_start + 24 jam` dihitung trigger; nilai dari klien diabaikan. Waktu kunjungan boleh dari 1 jam lalu sampai 24 jam ke depan.
-- Setelah 24 jam laporan otomatis tidak aktif (`v_guest_visits.is_active = false`). Tidak ada perpanjangan: buat laporan baru.
-- Batas: tamu maks 1 laporan aktif; warga maks 10.
-- Isi laporan tidak bisa diubah; hanya `aktif → selesai | dibatalkan` oleh pelapor/admin (kolom `status` saja yang boleh di-UPDATE).
-- Saat laporan dibuat: admin dan penghuni rumah tujuan dinotifikasi (`link = tamu.html`).
-- Tidak menyimpan NIK/KTP tamu (minimisasi data, UU PDP). Yang disimpan: nama, telepon opsional, plat opsional, tujuan.
+Aturan:
+- Berlaku tepat **24 jam** dari `visit_start` (dihitung DB; klien tidak bisa mengirim masa berlaku). `visit_start` boleh 1 jam lalu sampai 24 jam ke depan.
+- Setelah 24 jam laporan tidak aktif sendiri (`is_active = false`); perpanjangan = buat laporan baru.
+- Isi laporan tidak bisa diubah; status hanya `aktif → selesai | dibatalkan`, oleh pemilik sesi.
+- Nomor rumah tidak terdaftar tetap diterima (`host_unit_id` kosong); admin yang menilai. Rumah terdaftar → penghuni (warga) dinotifikasi juga.
+- Admin selalu dinotifikasi (`tamu.html`).
+- Warga boleh melaporkan tamunya (jalur akun) hanya untuk rumahnya sendiri.
+- Tidak menyimpan NIK/KTP tamu.
 
-## 4. Alur setelah login → beranda
+### Anti-spam (endpoint publik, ditegakkan di DB)
+| Batas | Nilai |
+|---|---|
+| Sesi tamu baru per IP | 20 / jam |
+| Laporan per sesi aktif | 1 |
+| Laporan per IP | 3 / jam dan 5 / 24 jam |
+| Masa sesi | 24 jam (`expires_at`, maksimal 24 jam oleh CHECK) |
+| IP pada laporan | dihapus setelah 30 hari (`fn_purge_expired`); sesi tamu dibuang 7 hari setelah habis |
+Catatan: batas per IP efektif hanya bila backend meneruskan **IP klien asli** (proxy tepercaya). Jika satu jaringan (NAT/WiFi gerbang) dipakai bersama banyak tamu, naikkan batasnya di `fn_guest_report_create`. Tambahkan CAPTCHA/honeypot di backend bila perlu.
+
+## 4. Alur setelah masuk → beranda
 ```
-POST /auth/login  → (OTP bila perlu) → sesi
-GET  /home        → backend: fn_session_user(sha256(cookie)) → set_config('app.user_id', uid, true) → SELECT fn_home()
+Admin/warga:  POST /auth/login → (OTP bila perlu) → cookie sesi
+              GET /home → fn_session_user(sha256(cookie)) → set_config('app.user_id', uid, true) → SELECT fn_home()
+Tamu:         POST /guest/start  → backend buat token acak 32 byte, simpan cookie guest_sid (HttpOnly, Secure, SameSite=Strict, Max-Age=86400)
+                                   → fn_guest_session_start(sha256(token), ip, ua)
+              GET  /guest/home   → fn_guest_home(sha256(token))
+              POST /guest/report → fn_guest_report_create(...)
+              POST /guest/report/:id/end → fn_guest_report_end(sha256(token), id, 'selesai'|'dibatalkan')
 ```
-`fn_home()` mengembalikan `jsonb` (atau `NULL` bila sesi tidak sah/tamu kedaluwarsa → backend balas 401):
+Fungsi tamu mengembalikan kode (`ok`, `no_session`, `active_exists`, `limit`, `invalid`, `not_found`); backend menyusun pesan ke pengguna.
+
+### `fn_guest_home` (tamu)
 ```json
-{
-  "user": {"id","full_name","role","unit":{"block","house_number"},"photo_storage_key","access_expires_at"},
-  "landing": "beranda_admin | beranda_warga | beranda_tamu",
-  "announcements": [{"id","category","title","excerpt","is_pinned","published_at"}],   // maks 10
-  "events": [{"id","title","location","starts_at","ends_at"}],                          // yang belum lewat, maks 10
-  "stats": { ...bergantung role... }
-}
+{"role":"guest","landing":"beranda_tamu","primary_action":"lapor_tamu","expires_at":"...",
+ "announcements":[{"id","title","excerpt","is_pinned","published_at"}],
+ "blocks":[{"id","name"}],
+ "my_reports":[{"id","visitor_name","host_block","host_house","host_name","visit_start","valid_until","status","is_active","seconds_left"}]}
 ```
-| Role | isi `stats` |
+### `fn_home` (admin & warga)
+```json
+{"user":{...},"landing":"beranda_admin | beranda_warga","announcements":[...],"events":[...],"stats":{...}}
+```
+| Peran | isi `stats` |
 |---|---|
 | admin | `reports_new`, `reports_in_progress`, `facility_pending`, `sigap_open`, `dues_awaiting_verification`, `guests_active`, `accounts_not_activated`, `unread_notifications` |
 | warga | `unread_notifications`, `my_open_reports`, `my_pending_facility`, `my_unpaid_dues`, `guests_at_my_unit` |
-| guest | `primary_action = "lapor_tamu"` (tombol utama), `my_active_visit` (`id`, `visitor_name`, `visit_start`, `valid_until`, atau `null`) |
 
-`landing` adalah kunci logis; frontend memetakannya ke halaman. Payload tidak memuat email/hash.
+Payload tidak memuat email/hash. `landing` adalah kunci logis; frontend memetakannya ke halaman.
 
-## 4b. Wajib di backend
-- Atur `app.user_id` dengan `set_config(..., true)` (lokal transaksi) sebelum query apa pun yang butuh RLS.
-- Login: tolak (pesan generik) bila `role='guest'` dan `access_expires_at <= now()`.
-- Muat sesi hanya lewat `fn_session_user`, jangan membaca role dari cookie/JWT.
-- Membuat akun tamu (admin): isi `role='guest'`, `access_expires_at`, `created_by` (tanpa `unit_id`); password sementara dibuat backend; tamu tetap lewat OTP login pertama.
+## 5. Wajib di backend
+- Cookie tamu **terpisah** dari cookie akun; jangan gabungkan.
+- `app.user_id` hanya untuk admin/warga (`set_config(..., true)` per transaksi). Jalur tamu tidak memakainya.
+- Teruskan IP klien asli ke fungsi tamu (proxy tepercaya), dan rate limit tambahan di depan.
+- Jangan membuat akun untuk tamu.
 
-## 5. Asumsi yang dipakai (mohon dikonfirmasi tim)
-1. Akun tamu **dibuat admin**, bukan daftar mandiri (konsisten dengan aturan "tanpa pendaftaran mandiri").
-2. "Lapor tamu 1x24 jam" = laporan kunjungan yang berlaku 24 jam; diajukan tamu lewat form di beranda (warga tuan rumah juga boleh melaporkan tamunya).
-5. Tamu tetap punya akun (login oleh admin-terdaftar). Bila timmu menginginkan tamu **tanpa akun** (form publik di gerbang), itu desain lain; beri tahu.
-3. Masa akses akun tamu maksimal 7 hari (dapat diubah di `trg_users_guard`).
-4. Tamu tidak mendapat notifikasi, SIGAP, atau fitur komunitas.
+## 6. Asumsi (mohon dikonfirmasi tim)
+1. Tamu tanpa akun, sesi 24 jam, tidak didaftarkan admin.
+2. Tamu hanya melihat berita komplek, bukan acara atau pengumuman internal.
+3. Nomor rumah tujuan boleh tidak terdaftar (tetap tercatat, admin menilai).
+4. Pengumuman kategori `komplek` kini tampil ke siapa pun yang membuka sesi tamu: **pastikan isinya memang boleh publik**.

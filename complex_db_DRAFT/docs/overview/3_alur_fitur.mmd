@@ -1,0 +1,39 @@
+flowchart LR
+  classDef st fill:#e8eefc,stroke:#4a64b3,color:#1d2a5c
+  classDef end_ fill:#d9f2e3,stroke:#1f8a4c,color:#0b3d22
+  classDef no fill:#fde4e4,stroke:#b33a3a,color:#5c1d1d
+
+  subgraph LAP["LAPORAN WARGA (kebersihan, fasilitas, keamanan, lainnya)"]
+    direction LR
+    l1([dikirim]):::st --> l2([diproses]):::st --> l3([selesai]):::end_
+    l1 --> l4([ditolak]):::no
+    l2 --> l4
+  end
+  subgraph FAS["PENGAJUAN FASILITAS (ambulans · lapangan · mushola)"]
+    direction LR
+    f1([menunggu_konfirmasi]):::st --> f2([disetujui]):::end_ --> f5([selesai]):::end_
+    f1 --> f3([ditolak]):::no
+    f1 --> f4([dibatalkan pemohon]):::no
+  end
+  subgraph SIG["SIGAP (darurat)"]
+    direction LR
+    s1([terkirim]):::st --> s2([diterima]):::st --> s3([menuju_lokasi]):::st --> s4([selesai]):::end_
+    s1 --> s5([dibatalkan]):::no
+  end
+  subgraph IUR["IURAN PER RUMAH PER BULAN"]
+    direction LR
+    i1([belum_dibayar]):::st --> i2([menunggu_verifikasi]):::st --> i3([lunas]):::end_
+  end
+  subgraph VIS["LAPOR TAMU 1x24 JAM"]
+    direction LR
+    v1([aktif]):::st --> v2([selesai]):::end_
+    v1 --> v3([dibatalkan]):::no
+    v1 -.->|lewat 24 jam| v4([tidak aktif otomatis]):::no
+  end
+  subgraph KOM["KOMUNITAS · PENGUMUMAN · ACARA"]
+    direction LR
+    k1["Warga: posting, like, komentar<br/>(media maks 4)"]:::st --> k2["Hapus = soft delete<br/>(admin/pemilik)"]:::no
+    k3["Admin: pengumuman + acara"]:::st --> k4["Otomatis jadi notifikasi<br/>ke admin & warga (bukan tamu)"]:::end_
+  end
+
+  note1["Yang dilakukan DB otomatis: riwayat status, notifikasi ke pihak terkait,<br/>anti-bentrok jadwal fasilitas, audit log, isolasi data per pengguna (RLS).<br/>Yang tetap tugas backend: validasi input, upload file, kirim email, realtime SIGAP."]
