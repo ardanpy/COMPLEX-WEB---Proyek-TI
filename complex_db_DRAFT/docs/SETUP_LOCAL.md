@@ -45,6 +45,7 @@ Password semua akun: `Complex#Test2026`
 | admin@complex.test | admin | aktif | login admin |
 | budi@complex.test | warga (Jati 1/52) | aktif | login normal, lupa password |
 | sari@complex.test | warga (Jati 2/15) | **belum aktif** | login pertama → OTP → set password |
+| tamu@complex.test | guest (tanpa rumah; tujuan dipilih saat Lapor Tamu) | aktif, akses 24 jam sejak setup | beranda tamu, Lapor Tamu, kedaluwarsa (jalankan ulang setup untuk memperbarui jamnya) |
 
 Karena email belum terhubung, saat mengembangkan backend cetak kode OTP ke log konsol (hanya di mode dev), jangan pernah di produksi.
 
@@ -62,8 +63,8 @@ SELECT set_config('app.user_id', '<uuid-dari-sesi>', true), set_config('app.ip',
 
 ## 5. Verifikasi
 ```bash
-sudo -u postgres tests/run.sh        # 140 asersi SQL (DB sementara complex_test)
-sudo -u postgres tests/run_sim.sh    # 37 asersi alur login/OTP (DB sementara complex_login)
+sudo -u postgres tests/run.sh        # 191 asersi SQL (DB sementara complex_test)
+sudo -u postgres tests/run_sim.sh    # 49 asersi alur login/OTP (DB sementara complex_login)
 psql "$DATABASE_URL" -c "select current_user"   # harus: complex_app
 ```
 Kedua tes membuat dan menimpa DB mereka sendiri, DB `complex` Anda tidak tersentuh. Detail lengkap: `docs/TESTING.md`.

@@ -26,7 +26,7 @@ def code_hash(uid, purpose, code):
 def sha(t): return hashlib.sha256(t.encode()).digest()
 
 def lookup(email):
-    return app.execute("SELECT id, password_hash, status, locked_until > now(), activated_at, activation_expires_at > now(), role "
+    return app.execute("SELECT id, password_hash, status, locked_until > now(), activated_at, activation_expires_at > now(), role, access_expires_at "
                        "FROM users WHERE email=%s", (email,)).fetchone()
 
 def login(email, password, ip="10.0.0.5"):
@@ -38,13 +38,15 @@ def login(email, password, ip="10.0.0.5"):
             except VerifyMismatchError: pass
             app.execute("SELECT fn_login_failed(NULL,%s,%s::inet,'sim')", (email, ip))
             return 401, {"error": GENERIC_LOGIN}
-        uid, h, status, locked, activated, act_ok, role = r
+        uid, h, status, locked, activated, act_ok, role, access_until = r
         if status != "aktif" or locked:
             return 401, {"error": GENERIC_LOGIN}
         try: ph.verify(h, password)
         except VerifyMismatchError:
             app.execute("SELECT fn_login_failed(%s,%s,%s::inet,'sim')", (uid, email, ip))
             return 401, {"error": GENERIC_LOGIN}
+        if role == "guest" and app.execute("SELECT %s::timestamptz <= now()", (access_until,)).fetchone()[0]:
+            return 401, {"error": GENERIC_LOGIN}               # akses tamu berakhir: pesan tetap generik
         if activated is None:                                  # login pertama -> OTP, BUKAN sesi
             if not act_ok: return 401, {"error": GENERIC_LOGIN}
             return 200, {"next": "otp", "uid": str(uid), "purpose": "activation"}
@@ -80,9 +82,23 @@ def set_password(ticket, new_pw):
         return app.execute("SELECT fn_set_password(%s,%s,'10.0.0.5'::inet)", (sha(ticket), ph.hash(new_pw))).fetchone()[0]
 
 def me(tok):
+    """Muat pengguna dari sesi lewat fn_session_user (role dari DB; tamu kedaluwarsa tidak dikenali)."""
     with app.transaction():
-        return app.execute("SELECT u.role FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=%s "
-                           "AND s.revoked_at IS NULL AND s.expires_at>now() AND u.status='aktif'", (sha(tok),)).fetchone()
+        return app.execute("SELECT role, user_id FROM fn_session_user(%s)", (sha(tok),)).fetchone()
+
+def home(tok):
+    """Beranda setelah login: konteks RLS diset per transaksi, lalu satu panggilan fn_home()."""
+    with app.transaction():
+        u = app.execute("SELECT user_id FROM fn_session_user(%s)", (sha(tok),)).fetchone()
+        if not u: return None
+        app.execute("SELECT set_config('app.user_id', %s, true)", (str(u[0]),))
+        return app.execute("SELECT fn_home()").fetchone()[0]
+
+def rows_as(tok, sql):
+    with app.transaction():
+        u = app.execute("SELECT user_id FROM fn_session_user(%s)", (sha(tok),)).fetchone()
+        app.execute("SELECT set_config('app.user_id', %s, true)", (str(u[0]),))
+        return app.execute(sql).fetchall()
 
 SARI = "sari@complex.test"
 # --- A. login biasa
@@ -136,6 +152,39 @@ owner.execute("UPDATE users SET status='ditangguhkan' WHERE email='budi@complex.
 n1 = len(outbox); forgot("budi@complex.test")
 check("akun ditangguhkan tidak mendapat OTP reset", len(outbox) == n1)
 owner.execute("UPDATE users SET status='aktif' WHERE email='budi@complex.test'")
+
+# --- F. role guest (tamu) + beranda per role
+st, g = login("tamu@complex.test", PW)
+check("tamu login -> sesi, role guest", st == 200 and g.get("role") == "guest")
+check("sesi tamu dipotong sampai batas akses (<= 24 jam)", owner.execute("SELECT expires_at <= now()+interval '24 hours 1 minute' FROM sessions WHERE token_hash=%s", (sha(g["token"]),)).fetchone()[0])
+ha, hw, hg = home(a["token"]), home(b2["token"]), home(g["token"])
+check("beranda admin: landing + statistik pengelola", ha["landing"] == "beranda_admin" and "reports_new" in ha["stats"])
+check("beranda warga: landing + statistik miliknya", hw["landing"] == "beranda_warga" and "my_unpaid_dues" in hw["stats"] and "reports_new" not in hw["stats"])
+check("beranda tamu: berita + tombol utama lapor_tamu, tanpa rumah", hg["landing"] == "beranda_tamu" and set(hg["stats"]) == {"my_active_visit", "primary_action"} and hg["stats"]["primary_action"] == "lapor_tamu" and hg["user"]["unit"] is None)
+check("tidak ada hash password/email di payload beranda", "password" not in str(hg) + str(hw) + str(ha) and "@" not in str(hg))
+for t_ in ("reports", "posts", "dues_bills", "facility_requests", "security_guards", "v_community_members"):
+    if rows_as(g["token"], f"SELECT 1 FROM {t_}"): check(f"tamu tidak boleh membaca {t_}", False); break
+else: check("tamu tidak dapat membaca laporan, komunitas, iuran, fasilitas, satpam, anggota", True)
+def write_denied(tok, sql):
+    try:
+        rows_as(tok, sql); return False
+    except psycopg.errors.InsufficientPrivilege: return True
+    except psycopg.errors.Error as e: return "row-level security" in str(e)
+check("tamu tidak bisa membuat laporan/postingan (RLS)",
+      write_denied(g["token"], "INSERT INTO reports(reporter_id,category,title,description,location_text) VALUES(current_setting('app.user_id')::uuid,'lainnya','x1','x','x')")
+      and write_denied(g["token"], "INSERT INTO posts(author_id,body) VALUES(current_setting('app.user_id')::uuid,'halo')"))
+with app.transaction():
+    app.execute("SELECT set_config('app.user_id', %s, true)", (g["uid"],))
+    app.execute("INSERT INTO guest_visits(reporter_id,visitor_name,visitor_address,host_unit_id,host_name,purpose) VALUES(%s,'Tamu Contoh','Jl. Mawar 3, Bekasi',(SELECT unit_id FROM users WHERE email='budi@complex.test'),'Pak Budi','Silaturahmi')", (g["uid"],))
+check("tamu membuat Lapor Tamu; beranda menampilkan sisa 24 jam", home(g["token"])["stats"]["my_active_visit"]["valid_until"] is not None)
+check("budi (tuan rumah) melihat 1 tamu aktif di berandanya", home(b2["token"])["stats"]["guests_at_my_unit"] == 1)
+# kedaluwarsa (time travel lewat koneksi pemilik)
+owner.execute("ALTER TABLE users DISABLE TRIGGER users_guard")
+owner.execute("UPDATE users SET created_at=created_at-interval '3 days', access_expires_at=now()-interval '1 minute' WHERE email='tamu@complex.test'")
+owner.execute("ALTER TABLE users ENABLE TRIGGER users_guard")
+check("tamu kedaluwarsa: sesi lama tidak dikenali & beranda kosong", me(g["token"]) is None and home(g["token"]) is None)
+st, rg = login("tamu@complex.test", PW)
+check("tamu kedaluwarsa: login ditolak dengan pesan generik", st == 401 and rg == {"error": GENERIC_LOGIN})
 
 # --- E. injeksi & kelancangan hak akses
 st, _ = login("' OR '1'='1' --", "x");   check("SQLi di email login -> 401", st == 401)

@@ -5,6 +5,7 @@
 --
 --   admin@complex.test  admin   sudah aktif
 --   budi@complex.test   warga   Jati 1 / 52   sudah aktif
+--   tamu@complex.test   guest   (db/dev/guest_seed.sql, tanpa rumah, akses 24 jam)
 --   sari@complex.test   warga   Jati 2 / 15   BELUM AKTIF (activated_at NULL) -> uji alur login pertama (OTP email)
 -- =====================================================================
 INSERT INTO users (id, email, full_name, role, password_hash, activated_at)

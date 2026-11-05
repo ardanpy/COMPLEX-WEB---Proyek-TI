@@ -74,7 +74,7 @@ SELECT t.assert((SELECT resolved_at IS NOT NULL FROM reports WHERE title='Seloka
 SELECT t.assert(EXISTS(SELECT 1 FROM notification_recipients nr JOIN notifications n ON n.id=nr.notification_id
    WHERE nr.user_id='00000000-0000-0000-0000-0000000000b2' AND n.title='Status laporan diperbarui'), 'pelapor menerima notifikasi perubahan status');
 SELECT t.assert((SELECT count(*) FROM notification_recipients nr JOIN notifications n ON n.id=nr.notification_id WHERE n.announcement_id IS NOT NULL)
-  = (SELECT count(*) FROM users WHERE status='aktif'), 'pengumuman di-fanout ke seluruh pengguna aktif');
+  = (SELECT count(*) FROM users WHERE status='aktif' AND role IN ('admin','warga')), 'pengumuman di-fanout ke admin & warga aktif (tamu tidak)');
 SELECT t.fails('report_recipient hanya untuk kategori kebersihan',
   $q$INSERT INTO reports(reporter_id,category,title,description,location_text,recipient) VALUES('00000000-0000-0000-0000-0000000000b1','keamanan','abc','x','y','pengurus_rt')$q$, 'reports_check');
 INSERT INTO sigap_alerts(user_id) VALUES ('00000000-0000-0000-0000-0000000000b1');
@@ -106,8 +106,12 @@ SELECT t.assert(t.login_lookup($$x'; DROP TABLE users;--$$)=0 AND to_regclass('u
 
 \echo '=== F. Role aplikasi (complex_app): hak akses minimal ==='
 SET ROLE complex_app;
-SELECT t.fails('app tidak bisa membuat akun ADMIN',
+SELECT t.fails('tanpa sesi, app tidak bisa membuat akun apa pun (tidak ada pendaftaran mandiri)',
+  $q$INSERT INTO users(email,full_name,password_hash,unit_id,created_by) VALUES('mandiri@t.id','Mandiri','$2a$06$aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',(SELECT min(id) FROM units),'00000000-0000-0000-0000-0000000000a1')$q$, 'Hanya admin');
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000a1',false);
+SELECT t.fails('bahkan sesi admin lewat app tidak bisa membuat akun ADMIN',
   $q$INSERT INTO users(email,full_name,role,password_hash,created_by) VALUES('hack@t.id','Hack','admin','$2a$06$aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','00000000-0000-0000-0000-0000000000a1')$q$, 'admin hanya dapat dibuat');
+RESET app.user_id;
 SELECT t.fails('app tidak bisa mengubah kolom role (privilege-escalation)',
   $q$UPDATE users SET role='admin' WHERE id='00000000-0000-0000-0000-0000000000b1'$q$, 'permission denied');
 SELECT t.fails('app tidak bisa DELETE users', $q$DELETE FROM users$q$, 'permission denied');
@@ -281,6 +285,128 @@ RESET app.user_id;
 RESET ROLE;
 SELECT t.assert((SELECT activated_at IS NULL AND activation_expires_at > now() FROM users WHERE id='00000000-0000-0000-0000-0000000000b1'), 'setelah reset admin: budi wajib aktivasi ulang, batas 7 hari');
 SELECT t.assert((SELECT count(*) FROM audit_logs WHERE action='PASSWORD_RESET_BY_ADMIN')=1, 'reset oleh admin tercatat di audit');
+
+
+\echo '=== K. Role guest: batas akses, RLS, Lapor Tamu 1x24 jam, beranda per role ==='
+RESET ROLE; RESET app.user_id;
+UPDATE users SET activated_at = now() WHERE id='00000000-0000-0000-0000-0000000000b1';   -- budi sempat di-reset admin pada bagian J
+SELECT t.assert((SELECT role='guest' AND access_expires_at > now() FROM users WHERE id='00000000-0000-0000-0000-0000000000d1'), 'akun guest uji punya batas akses');
+SELECT t.fails('guest tanpa batas akses ditolak',
+  $q$INSERT INTO users(email,full_name,role,password_hash,created_by) VALUES('g0@t.id','Guest Nol','guest','$2a$06$aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','00000000-0000-0000-0000-0000000000a1')$q$, 'guest_wajib_punya_batas_akses');
+SELECT t.fails('warga tidak boleh punya batas akses',
+  $q$UPDATE users SET access_expires_at = now()+interval '1 day' WHERE id='00000000-0000-0000-0000-0000000000b1'$q$, 'guest_wajib_punya_batas_akses');
+SELECT t.fails('akun guest tidak boleh terikat rumah (tujuan dipilih per laporan)',
+  $q$INSERT INTO users(email,full_name,role,unit_id,password_hash,access_expires_at,created_by) VALUES('g9@t.id','Guest Rumah','guest',(SELECT min(id) FROM units),'$2a$06$aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',now()+interval '1 day','00000000-0000-0000-0000-0000000000a1')$q$, 'guest_tanpa_rumah');
+SELECT t.fails('akses tamu > 7 hari ditolak',
+  $q$INSERT INTO users(email,full_name,role,password_hash,access_expires_at,created_by) VALUES('g8@t.id','Guest Lama','guest','$2a$06$aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',now()+interval '8 days','00000000-0000-0000-0000-0000000000a1')$q$, 'maksimal 7 hari');
+SELECT t.assert((SELECT count(*) FROM notification_recipients nr JOIN notifications n ON n.id=nr.notification_id WHERE nr.user_id='00000000-0000-0000-0000-0000000000d1')=0, 'tamu tidak menerima notifikasi pengumuman (fanout hanya admin & warga)');
+
+-- pembuatan akun hanya oleh admin
+SET ROLE complex_app;
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000b1',false);
+SELECT t.fails('sesi warga tidak bisa mendaftarkan akun tamu',
+  $q$INSERT INTO users(email,full_name,role,password_hash,access_expires_at,created_by) VALUES('g1@t.id','Guest Satu','guest','$argon2id$v=19$m=19456,t=2,p=1$a$b',now()+interval '1 day','00000000-0000-0000-0000-0000000000a1')$q$, 'Hanya admin');
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000a1',false);
+SELECT t.works('admin mendaftarkan akun tamu (batas akses 1 hari)',
+  $q$INSERT INTO users(email,full_name,role,password_hash,access_expires_at,created_by) VALUES('tamu2@complex.test','Tamu Dua','guest','$argon2id$v=19$m=19456,t=2,p=1$a$b',now()+interval '1 day','00000000-0000-0000-0000-0000000000a1')$q$);
+SELECT t.assert((SELECT activated_at IS NULL FROM users WHERE email='tamu2@complex.test'), 'akun tamu baru wajib aktivasi OTP (activated_at NULL)');
+
+-- guest: yang boleh & yang tidak
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000d1',false);
+SELECT t.assert((SELECT count(*) FROM announcements) > 0 AND (SELECT count(*) FROM blocks) = 7 AND (SELECT count(*) FROM units) > 0, 'guest dapat membaca beranda: pengumuman, blok, rumah');
+SELECT t.assert((SELECT count(*) FROM reports)=0 AND (SELECT count(*) FROM posts)=0 AND (SELECT count(*) FROM dues_bills)=0
+                AND (SELECT count(*) FROM security_guards)=0 AND (SELECT count(*) FROM facility_requests)=0
+                AND (SELECT count(*) FROM sigap_alerts)=0 AND (SELECT count(*) FROM v_community_members)=0
+                AND (SELECT count(*) FROM post_comments)=0 AND (SELECT count(*) FROM v_post_stats)=0, 'guest tidak melihat laporan, komunitas, iuran, satpam, fasilitas, SIGAP, anggota');
+SELECT t.fails('guest tidak bisa membuat laporan',
+  $q$INSERT INTO reports(reporter_id,category,title,description,location_text) VALUES('00000000-0000-0000-0000-0000000000d1','lainnya','Coba','Coba','Jati')$q$, 'row-level security');
+SELECT t.fails('guest tidak bisa membuat postingan',
+  $q$INSERT INTO posts(author_id,body) VALUES('00000000-0000-0000-0000-0000000000d1','halo')$q$, 'row-level security');
+SELECT t.fails('guest tidak bisa mengirim SIGAP',
+  $q$INSERT INTO sigap_alerts(user_id,message) VALUES('00000000-0000-0000-0000-0000000000d1','tes')$q$, 'row-level security');
+SELECT t.fails('guest tidak bisa mengajukan fasilitas',
+  $q$INSERT INTO facility_requests(facility,requester_id,applicant_name,applicant_phone,address_text,use_date,start_time,end_time,purpose,participant_count)
+     VALUES('mushola','00000000-0000-0000-0000-0000000000d1','Tamu','6281200000099','x','2030-03-01','08:00','09:00','Kajian',5)$q$, 'row-level security');
+SELECT t.fails('guest tidak bisa mengubah akun orang lain',
+  $q$UPDATE users SET phone='6281299999999' WHERE id='00000000-0000-0000-0000-0000000000b1'$q$, 'akunnya sendiri');
+SELECT t.fails('guest tidak bisa memperpanjang masa aksesnya sendiri',
+  $q$UPDATE users SET access_expires_at = now()+interval '5 days' WHERE id='00000000-0000-0000-0000-0000000000d1'$q$, 'masa akses');
+
+-- Lapor Tamu 1x24 jam
+SELECT t.fails('waktu kunjungan 5 jam lalu ditolak',
+  $q$INSERT INTO guest_visits(reporter_id,visitor_name,visitor_address,host_unit_id,purpose,visit_start) VALUES('00000000-0000-0000-0000-0000000000d1','Tamu Contoh','Jl. Mawar 3, Bekasi',(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b1'),'Silaturahmi',now()-interval '5 hours')$q$, 'Waktu kunjungan');
+SELECT t.works('guest mengisi form Lapor Tamu: nama, alamat, rumah & warga tujuan, keperluan (klien mencoba valid_until 99 hari)',
+  $q$INSERT INTO guest_visits(reporter_id,visitor_name,visitor_address,host_unit_id,host_name,purpose,valid_until) VALUES('00000000-0000-0000-0000-0000000000d1','Tamu Contoh','Jl. Mawar 3, Bekasi',(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b1'),'Pak Budi','Silaturahmi keluarga',now()+interval '99 days')$q$);
+SELECT t.assert((SELECT host_name='Pak Budi' AND visitor_address LIKE 'Jl. Mawar%' AND host_unit_id=(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b1') FROM guest_visits WHERE reporter_id='00000000-0000-0000-0000-0000000000d1'), 'tujuan (rumah + nama warga) dan alamat tamu tersimpan');
+SELECT t.assert((SELECT valid_until = visit_start + interval '24 hours' AND status='aktif' AND guest_user_id='00000000-0000-0000-0000-0000000000d1' FROM guest_visits WHERE reporter_id='00000000-0000-0000-0000-0000000000d1'), 'masa berlaku dihitung DB = tepat 24 jam, bukan dari klien');
+SELECT t.assert((SELECT is_active AND seconds_left BETWEEN 86300 AND 86400 FROM v_guest_visits WHERE reporter_id='00000000-0000-0000-0000-0000000000d1'), 'v_guest_visits: aktif, sisa ~24 jam');
+SELECT t.fails('laporan tamu aktif kedua ditolak (maks 1 per tamu)',
+  $q$INSERT INTO guest_visits(reporter_id,visitor_name,visitor_address,host_unit_id,purpose) VALUES('00000000-0000-0000-0000-0000000000d1','Tamu Contoh','Jl. Mawar 3, Bekasi',(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b1'),'Lagi')$q$, 'masih ada laporan tamu');
+SELECT t.fails('laporan tamu tidak bisa diperpanjang (valid_until tidak boleh di-UPDATE aplikasi)',
+  $q$UPDATE guest_visits SET valid_until = valid_until + interval '48 hours' WHERE reporter_id='00000000-0000-0000-0000-0000000000d1'$q$, 'permission denied');
+SELECT t.fails('visitor_name tidak bisa diubah setelah dilapor',
+  $q$UPDATE guest_visits SET visitor_name = 'Orang Lain' WHERE reporter_id='00000000-0000-0000-0000-0000000000d1'$q$, 'permission denied');
+
+-- warga: tuan rumah vs rumah lain
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000b2',false);
+SELECT t.works('sari melapor tamunya sendiri',
+  $q$INSERT INTO guest_visits(reporter_id,visitor_name,visitor_address,visitor_phone,host_unit_id,purpose) VALUES('00000000-0000-0000-0000-0000000000b2','Ibu Sari','Jl. Kenanga 9, Depok','6281211112222',(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b2'),'Kunjungan keluarga')$q$);
+SELECT t.fails('sari tidak bisa melapor tamu untuk rumah budi',
+  $q$INSERT INTO guest_visits(reporter_id,visitor_name,visitor_address,host_unit_id,purpose) VALUES('00000000-0000-0000-0000-0000000000b2','X Palsu','Jl. X 1',(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b1'),'Iseng')$q$, 'rumahnya sendiri');
+SELECT t.assert((SELECT count(*) FROM guest_visits)=1 AND (SELECT visitor_name FROM guest_visits)='Ibu Sari', 'sari hanya melihat laporan tamu rumahnya (bukan tamu rumah budi)');
+UPDATE guest_visits SET status='dibatalkan' WHERE visitor_name='Tamu Contoh';
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000b1',false);
+SELECT t.assert((SELECT count(*) FROM guest_visits WHERE visitor_name='Tamu tidak terlihat')=0 AND (SELECT status FROM guest_visits WHERE visitor_name='Tamu Contoh')='aktif', 'sari tidak bisa membatalkan laporan tamu rumah lain (tetap aktif)');
+SELECT t.assert((SELECT count(*) FROM guest_visits)=1, 'budi (tuan rumah) melihat laporan tamu untuk rumahnya, tidak melihat tamu rumah sari');
+
+-- beranda per role
+SELECT t.assert(fn_home()->>'landing'='beranda_warga' AND (fn_home()->'stats'->>'guests_at_my_unit')::int=1
+                AND (fn_home()->'stats') ? 'my_unpaid_dues' AND NOT ((fn_home()->'stats') ? 'reports_new'), 'beranda warga: statistik miliknya + tamu di rumahnya, tanpa statistik admin');
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000a1',false);
+SELECT t.assert(fn_home()->>'landing'='beranda_admin' AND (fn_home()->'stats') ? 'reports_new' AND (fn_home()->'stats'->>'guests_active')::int=2 AND jsonb_array_length(fn_home()->'announcements')>0, 'beranda admin: statistik pengelola (2 tamu aktif) + pengumuman');
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000d1',false);
+SELECT t.assert(fn_home()->>'landing'='beranda_tamu' AND (fn_home()->'stats') ? 'my_active_visit' AND NOT ((fn_home()->'stats') ? 'reports_new')
+                AND NOT ((fn_home()->'stats') ? 'my_unpaid_dues') AND fn_home()->'stats'->>'primary_action'='lapor_tamu' AND fn_home()->'user'->'unit' = 'null'::jsonb AND jsonb_array_length(fn_home()->'announcements')>0, 'beranda tamu: berita + tombol utama lapor_tamu + status laporannya, tanpa rumah');
+SELECT t.works('guest mengakhiri laporan tamunya', $q$UPDATE guest_visits SET status='selesai' WHERE reporter_id='00000000-0000-0000-0000-0000000000d1'$q$);
+SELECT t.assert((SELECT status='selesai' AND ended_at IS NOT NULL AND NOT is_active FROM v_guest_visits WHERE reporter_id='00000000-0000-0000-0000-0000000000d1'), 'status selesai, ended_at terisi, tidak aktif lagi');
+SELECT t.fails('laporan yang sudah selesai tidak bisa diaktifkan lagi',
+  $q$UPDATE guest_visits SET status='dibatalkan' WHERE reporter_id='00000000-0000-0000-0000-0000000000d1'$q$, 'Transisi');
+RESET app.user_id;
+SELECT t.assert(fn_home() IS NULL, 'tanpa sesi: beranda NULL');
+
+-- notifikasi lapor tamu (dibaca sebagai pemilik DB)
+RESET ROLE;
+SELECT t.assert(EXISTS (SELECT 1 FROM notification_recipients nr JOIN notifications n ON n.id=nr.notification_id
+                         WHERE n.source_key LIKE 'guest-visit:%' AND nr.user_id='00000000-0000-0000-0000-0000000000a1'), 'admin dinotifikasi saat ada lapor tamu');
+SELECT t.assert(EXISTS (SELECT 1 FROM notification_recipients nr JOIN notifications n ON n.id=nr.notification_id
+                         WHERE n.title='Tamu untuk rumah Anda' AND nr.user_id='00000000-0000-0000-0000-0000000000b1'), 'penghuni rumah tujuan (budi) dinotifikasi');
+SELECT t.assert(NOT EXISTS (SELECT 1 FROM notification_recipients nr JOIN notifications n ON n.id=nr.notification_id
+                         WHERE n.title='Tamu untuk rumah Anda' AND nr.user_id='00000000-0000-0000-0000-0000000000d1'), 'tamu sendiri tidak dinotifikasi');
+
+-- sesi tamu & kedaluwarsa
+UPDATE users SET access_expires_at = now() + interval '2 hours' WHERE id='00000000-0000-0000-0000-0000000000d1';
+INSERT INTO sessions(user_id,token_hash,expires_at) VALUES ('00000000-0000-0000-0000-0000000000d1', t.h('sesi-tamu'), now()+interval '8 hours');
+SELECT t.assert((SELECT expires_at <= now()+interval '2 hours' FROM sessions WHERE token_hash=t.h('sesi-tamu')), 'sesi tamu dipotong sampai batas akses (8 jam -> 2 jam)');
+SELECT t.assert((SELECT role='guest' FROM fn_session_user(t.h('sesi-tamu'))), 'fn_session_user memuat tamu dengan role dari DB');
+ALTER TABLE users DISABLE TRIGGER users_guard;
+UPDATE users SET created_at = created_at - interval '3 days', access_expires_at = now() - interval '1 minute' WHERE id='00000000-0000-0000-0000-0000000000d1';
+ALTER TABLE users ENABLE TRIGGER users_guard;
+SELECT t.assert(NOT EXISTS (SELECT 1 FROM fn_session_user(t.h('sesi-tamu'))), 'akses lewat: sesi lama tamu tidak lagi dikenali');
+SELECT t.fails('sesi baru untuk tamu kedaluwarsa ditolak',
+  $q$INSERT INTO sessions(user_id,token_hash,expires_at) VALUES ('00000000-0000-0000-0000-0000000000d1', sha256(convert_to('baru','UTF8')), now()+interval '1 hour')$q$, 'Akses tamu telah berakhir');
+SET ROLE complex_app;
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000d1',false);
+SELECT t.assert((SELECT count(*) FROM announcements)=0 AND (SELECT count(*) FROM blocks)=0, 'tamu kedaluwarsa: RLS tidak menampilkan apa pun walau user_id masih terkirim');
+SELECT t.assert(fn_home() IS NULL, 'tamu kedaluwarsa: beranda NULL');
+SELECT t.fails('tamu kedaluwarsa tidak bisa lapor tamu',
+  $q$INSERT INTO guest_visits(reporter_id,visitor_name,visitor_address,host_unit_id,purpose) VALUES('00000000-0000-0000-0000-0000000000d1','Tamu Contoh','Jl. Mawar 3, Bekasi',(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b1'),'Coba lagi')$q$, 'row-level security');
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000a1',false);
+SELECT t.fails('admin tidak bisa memberi akses tamu > 7 hari',
+  $q$UPDATE users SET access_expires_at = now()+interval '8 days' WHERE id='00000000-0000-0000-0000-0000000000d1'$q$, 'maksimal 7 hari');
+SELECT t.works('admin memperpanjang akses tamu (1 hari)', $q$UPDATE users SET access_expires_at = now()+interval '1 day' WHERE id='00000000-0000-0000-0000-0000000000d1'$q$);
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000d1',false);
+SELECT t.assert(fn_home()->>'landing'='beranda_tamu', 'setelah diperpanjang admin, tamu kembali dapat beranda');
+RESET app.user_id; RESET ROLE;
 
 \echo '=== I. Anonimisasi ==='
 SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000a1',false);
