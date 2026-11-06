@@ -159,8 +159,8 @@ SELECT t.fails('warga tidak bisa mengubah blok/nomor rumahnya sendiri',
   $q$UPDATE users SET unit_id=(SELECT id FROM units ORDER BY id DESC LIMIT 1) WHERE id='00000000-0000-0000-0000-0000000000b2'$q$, 'hanya dapat diubah admin');
 SELECT t.fails('warga tidak bisa mengubah status akunnya sendiri',
   $q$UPDATE users SET status='ditangguhkan' WHERE id='00000000-0000-0000-0000-0000000000b2'$q$, 'hanya dapat diubah admin');
-SELECT t.fails('warga tidak bisa mengubah profil warga lain (IDOR)',
-  $q$UPDATE users SET full_name='Diretas' WHERE id='00000000-0000-0000-0000-0000000000b1'$q$, 'akunnya sendiri');
+WITH x AS (UPDATE users SET full_name='Diretas' WHERE id='00000000-0000-0000-0000-0000000000b1' RETURNING 1)
+SELECT t.assert((SELECT count(*) FROM x)=0, 'warga tidak bisa mengubah profil warga lain (IDOR, RLS: 0 baris terubah)');
 SELECT t.works('warga bisa mengubah nama/telepon akunnya sendiri',
   $q$UPDATE users SET phone='6281211112222' WHERE id='00000000-0000-0000-0000-0000000000b2'$q$);
 SELECT t.works('warga bisa mengisi kunci foto profil (nama dibuat server)',
@@ -169,8 +169,8 @@ SELECT t.fails('kunci foto path traversal ditolak',
   $q$UPDATE users SET photo_storage_key='../../etc/passwd' WHERE id='00000000-0000-0000-0000-0000000000b2'$q$, 'photo_storage_key');
 SELECT t.fails('kunci foto dengan ekstensi berbahaya (.php) ditolak',
   $q$UPDATE users SET photo_storage_key='3f2b8c1e-5a7d-4e9f-8b21-0c4d6e7f8a90.php' WHERE id='00000000-0000-0000-0000-0000000000b2'$q$, 'photo_storage_key');
-SELECT t.fails('warga tidak bisa mengganti foto warga lain',
-  $q$UPDATE users SET photo_storage_key='3f2b8c1e-5a7d-4e9f-8b21-0c4d6e7f8a91.png' WHERE id='00000000-0000-0000-0000-0000000000b1'$q$, 'akunnya sendiri');
+WITH x AS (UPDATE users SET photo_storage_key='3f2b8c1e-5a7d-4e9f-8b21-0c4d6e7f8a91.png' WHERE id='00000000-0000-0000-0000-0000000000b1' RETURNING 1)
+SELECT t.assert((SELECT count(*) FROM x)=0, 'warga tidak bisa mengganti foto warga lain (RLS: 0 baris terubah)');
 SELECT t.assert((SELECT count(*) FROM dues_bills)=1 AND (SELECT unit_id FROM dues_bills)=(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b2'), 'sari hanya melihat tagihan iuran rumahnya');
 
 SELECT set_config('app.user_id',gen_random_uuid()::text,false);
@@ -196,7 +196,9 @@ RESET ROLE;
 \echo '=== H. Login pra-autentikasi sebagai app (tanpa user_id) ==='
 SET ROLE complex_app;
 RESET app.user_id; RESET app.user_role;
-SELECT t.assert((SELECT count(*) FROM users WHERE email='budi@complex.test')=1, 'app bisa mencari user berdasarkan email utk login');
+SELECT t.assert((SELECT count(*) FROM fn_login_lookup('budi@complex.test'))=1, 'app bisa mencari akun utk login lewat fn_login_lookup');
+SELECT t.assert((SELECT count(*) FROM users)=0, 'tanpa user_id, RLS users tidak menampilkan baris');
+SELECT t.fails('password_hash tidak dapat dibaca aplikasi', $q$SELECT password_hash FROM users$q$, 'permission denied');
 SELECT t.works('app bisa mencatat login gagal tanpa sesi', $q$SELECT fn_login_failed(NULL,'tak-ada@x.id','10.1.1.1')$q$);
 SELECT t.assert(EXISTS(SELECT 1 FROM login_attempts WHERE email='tak-ada@x.id' AND success=false), 'percobaan login email tak dikenal tercatat');
 SELECT t.works('app bisa membuat sesi',
@@ -291,6 +293,7 @@ SELECT t.assert((SELECT count(*) FROM audit_logs WHERE action='PASSWORD_RESET_BY
 RESET ROLE; RESET app.user_id;
 SELECT id AS blk1 FROM blocks WHERE name='Jati 1' \gset
 SELECT id AS blk2 FROM blocks WHERE name='Jati 2' \gset
+SELECT unit_id AS budiunit FROM users WHERE id='00000000-0000-0000-0000-0000000000b1' \gset
 UPDATE users SET activated_at = now() WHERE id='00000000-0000-0000-0000-0000000000b1';   -- budi sempat di-reset admin pada bagian J
 SELECT t.assert(NOT EXISTS (SELECT 1 FROM pg_enum e JOIN pg_type ty ON ty.oid=e.enumtypid WHERE ty.typname='user_role' AND e.enumlabel='guest'), 'tamu bukan role akun (user_role hanya admin & warga)');
 INSERT INTO announcements(category,title,body,created_by) VALUES
@@ -363,7 +366,7 @@ SELECT t.assert((SELECT count(*) FROM v_guest_visits)=1 AND (SELECT visitor_name
 SELECT t.works('sari melapor tamunya sendiri (jalur warga)',
   $q$INSERT INTO guest_visits(reporter_id,visitor_name,visitor_address,host_unit_id,purpose) VALUES('00000000-0000-0000-0000-0000000000b2','Ibu Sari','Jl. Kenanga 9, Depok',(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b2'),'Kunjungan keluarga')$q$);
 SELECT t.fails('sari tidak bisa melapor tamu untuk rumah budi',
-  $q$INSERT INTO guest_visits(reporter_id,visitor_name,visitor_address,host_unit_id,purpose) VALUES('00000000-0000-0000-0000-0000000000b2','X Palsu','Jl. X 1',(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b1'),'Iseng')$q$, 'rumahnya sendiri');
+  $q$INSERT INTO guest_visits(reporter_id,visitor_name,visitor_address,host_unit_id,purpose) VALUES('00000000-0000-0000-0000-0000000000b2','X Palsu','Jl. X 1',$q$ || :budiunit || $q$,'Iseng')$q$, 'rumahnya sendiri');
 SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000a1',false);
 SELECT t.assert((SELECT count(*) FROM v_guest_visits)=5 AND (SELECT count(*) FROM v_guest_visits WHERE from_guest)=4, 'admin melihat semua laporan tamu (4 dari sesi tamu + 1 dari warga)');
 SELECT t.assert((fn_home()->>'landing')='beranda_admin' AND (fn_home()->'stats') ? 'reports_new' AND (fn_home()->'stats'->>'guests_active')::int=5, 'beranda admin: 5 tamu aktif + statistik pengelola');
@@ -398,6 +401,36 @@ ALTER TABLE guest_visits ENABLE TRIGGER guest_visits_before; ALTER TABLE guest_v
 SELECT fn_purge_expired();
 SELECT t.assert(NOT EXISTS (SELECT 1 FROM guest_sessions WHERE token_hash=t.h('tokG')) AND EXISTS (SELECT 1 FROM guest_sessions WHERE token_hash=t.h('tokA')), 'purge: sesi tamu lama dibuang, sesi baru tetap');
 SELECT t.assert((SELECT ip IS NULL FROM guest_visits WHERE id=:'vide') AND (SELECT ip IS NOT NULL FROM guest_visits WHERE id=:'vidd'), 'purge: IP pada laporan > 30 hari dihapus, laporan tetap ada');
+RESET app.user_id; RESET ROLE;
+
+\echo '=== L. Penambal audit: users, jadwal kebersihan, bukti bayar iuran, riwayat aktivitas ==='
+RESET ROLE; RESET app.user_id;
+SELECT id AS sbill FROM dues_bills WHERE unit_id=(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b2') LIMIT 1 \gset
+SELECT id AS bbill FROM dues_bills WHERE unit_id=(SELECT unit_id FROM users WHERE id='00000000-0000-0000-0000-0000000000b1') LIMIT 1 \gset
+SET ROLE complex_app;
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000b2',false);
+SELECT t.assert((SELECT count(*) FROM users)=1, 'RLS users: warga hanya melihat barisnya sendiri');
+SELECT t.fails('password_hash tidak terbaca (warga)', $q$SELECT password_hash FROM users$q$, 'permission denied');
+SELECT t.assert((SELECT count(*) FROM cleaning_schedule)>=6, 'warga melihat jadwal kebersihan');
+SELECT t.fails('warga tidak bisa mengubah jadwal kebersihan', $q$INSERT INTO cleaning_schedule(weekday,area,start_time,end_time) VALUES (7,'X','07:00','08:00')$q$, 'row-level security');
+SELECT t.fails('kunci bukti bayar berbahaya ditolak', format($q$INSERT INTO dues_payment_proofs(bill_id,uploaded_by,storage_key,paid_amount,paid_on) VALUES (%L,'00000000-0000-0000-0000-0000000000b2','../../x.php',50000,current_date)$q$, :'sbill'), 'storage_key');
+SELECT t.fails('warga tidak bisa mengunggah bukti untuk tagihan rumah lain', format($q$INSERT INTO dues_payment_proofs(bill_id,uploaded_by,storage_key,paid_amount,paid_on) VALUES (%L,'00000000-0000-0000-0000-0000000000b2','3f2b8c1e-5a7d-4e9f-8b21-0c4d6e7f8a90.jpg',50000,current_date)$q$, :'bbill'), 'row-level security');
+SELECT t.works('warga mengunggah bukti bayar rumahnya', format($q$INSERT INTO dues_payment_proofs(bill_id,uploaded_by,storage_key,paid_amount,paid_on,method) VALUES (%L,'00000000-0000-0000-0000-0000000000b2','3f2b8c1e-5a7d-4e9f-8b21-0c4d6e7f8a90.jpg',50000,current_date,'transfer')$q$, :'sbill'));
+SELECT t.assert((SELECT status FROM dues_bills WHERE id=:'sbill')='menunggu_verifikasi', 'tagihan otomatis menunggu_verifikasi');
+SELECT t.fails('bukti kedua saat masih menunggu ditolak', format($q$INSERT INTO dues_payment_proofs(bill_id,uploaded_by,storage_key,paid_amount,paid_on) VALUES (%L,'00000000-0000-0000-0000-0000000000b2','3f2b8c1e-5a7d-4e9f-8b21-0c4d6e7f8a92.jpg',50000,current_date)$q$, :'sbill'), '');
+WITH x AS (UPDATE dues_payment_proofs SET status='diterima' RETURNING 1)
+SELECT t.assert((SELECT count(*) FROM x)=0, 'warga tidak bisa memverifikasi sendiri (RLS)');
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000a1',false);
+SELECT t.works('admin menolak bukti (wajib alasan)', $q$UPDATE dues_payment_proofs SET status='ditolak', reject_reason='Nominal tidak sesuai'$q$);
+SELECT t.assert((SELECT status FROM dues_bills WHERE id=:'sbill')='belum_dibayar', 'ditolak: tagihan kembali belum_dibayar');
+SELECT t.fails('bukti yang sudah diputuskan tidak bisa diubah', $q$UPDATE dues_payment_proofs SET status='diterima'$q$, 'tidak dapat diubah');
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000b2',false);
+SELECT t.works('warga unggah ulang bukti', format($q$INSERT INTO dues_payment_proofs(bill_id,uploaded_by,storage_key,paid_amount,paid_on) VALUES (%L,'00000000-0000-0000-0000-0000000000b2','3f2b8c1e-5a7d-4e9f-8b21-0c4d6e7f8a93.png',50000,current_date)$q$, :'sbill'));
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000a1',false);
+SELECT t.works('admin menerima bukti', $q$UPDATE dues_payment_proofs SET status='diterima' WHERE status='menunggu'$q$);
+SELECT t.assert((SELECT status='lunas' AND paid_at IS NOT NULL AND verified_by='00000000-0000-0000-0000-0000000000a1' FROM dues_bills WHERE id=:'sbill'), 'diterima: tagihan lunas, verifikator = admin');
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000b2',false);
+SELECT t.assert((SELECT count(*) FROM fn_my_activity(10))>=0 AND (SELECT count(*) FROM fn_my_activity(10) WHERE entity IS NULL)=0, 'fn_my_activity berjalan');
 RESET app.user_id; RESET ROLE;
 
 \echo '=== I. Anonimisasi ==='

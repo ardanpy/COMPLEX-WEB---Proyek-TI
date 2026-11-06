@@ -4,7 +4,7 @@ Ada dua rangkaian tes. Keduanya **membangun database sementara sendiri** dari no
 
 | Tes | Perintah | Isi | Hasil yang diharapkan |
 |---|---|---|---|
-| Skema & keamanan (SQL) | `tests/run.sh` | 195 asersi langsung di PostgreSQL | `LULUS: 195   GAGAL: 0   ERROR-TAK-TERDUGA: 0` |
+| Skema & keamanan (SQL) | `tests/run.sh` | 214 asersi langsung di PostgreSQL | `LULUS: 214   GAGAL: 0   ERROR-TAK-TERDUGA: 0` |
 | Alur login backend (Python) | `tests/run_sim.sh` | 55 asersi: login, OTP, lupa password, tamu anonim, beranda per peran, injeksi, hak akses | `LULUS 55 / 55` |
 
 ## 1. Prasyarat

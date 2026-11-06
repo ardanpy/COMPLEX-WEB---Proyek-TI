@@ -76,6 +76,26 @@ erDiagram
     inet ip
     timestamptz expires_at "maks 24 jam"
   }
+  units ||--o{ cleaning_schedule : "area/blok (opsional)"
+  dues_bills ||--o{ dues_payment_proofs : "bukti bayar"
+  users ||--o{ dues_payment_proofs : "warga mengunggah"
+  cleaning_schedule { smallint id PK
+    smallint weekday "1=Senin"
+    text area
+    smallint block_id FK
+    time start_time
+    time end_time
+    boolean is_active
+  }
+  dues_payment_proofs { uuid id PK
+    uuid bill_id FK
+    uuid uploaded_by FK
+    text storage_key "uuid.ext, dibuat server"
+    numeric paid_amount
+    date paid_on
+    proof_status status "menunggu|diterima|ditolak"
+    uuid reviewed_by FK
+  }
   guest_visits { uuid id PK
     uuid reporter_id FK "warga/admin, NULL bila tamu"
     uuid guest_session_id "tamu anonim"

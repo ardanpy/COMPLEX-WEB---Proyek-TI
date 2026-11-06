@@ -68,7 +68,7 @@ GRANT EXECUTE ON FUNCTION app_is_member() TO complex_app;
 -- pemuatan sesi akun (admin/warga): satu pintu untuk backend
 CREATE FUNCTION fn_session_user(p_token_hash bytea)
 RETURNS TABLE (user_id uuid, role user_role, full_name text, unit_id integer)
-LANGUAGE sql STABLE AS $$
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public, pg_temp AS $$
   SELECT u.id, u.role, u.full_name, u.unit_id
     FROM sessions s JOIN users u ON u.id = s.user_id
    WHERE s.token_hash = p_token_hash AND s.revoked_at IS NULL AND s.expires_at > now()
@@ -124,7 +124,7 @@ CREATE INDEX guest_visits_session_idx ON guest_visits (guest_session_id, created
 CREATE INDEX guest_visits_ip_idx ON guest_visits (ip, created_at DESC);
 
 CREATE FUNCTION trg_guest_visit_before() RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE r users%ROWTYPE; n integer;
+DECLARE r record; n integer;
 BEGIN
   IF TG_OP = 'INSERT' THEN
     NEW.status := 'aktif'; NEW.ended_at := NULL;
@@ -133,7 +133,7 @@ BEGIN
       RAISE EXCEPTION 'Waktu kunjungan hanya boleh dari 1 jam lalu sampai 24 jam ke depan.';
     END IF;
     IF NEW.reporter_id IS NOT NULL THEN                      -- jalur warga/admin
-      SELECT * INTO r FROM users WHERE id = NEW.reporter_id;
+      SELECT id, role, unit_id INTO r FROM users WHERE id = NEW.reporter_id;
       IF NEW.host_unit_id IS NULL THEN RAISE EXCEPTION 'host_unit_id wajib untuk laporan oleh warga/admin.'; END IF;
       IF r.role = 'warga' AND NEW.host_unit_id IS DISTINCT FROM r.unit_id THEN
         RAISE EXCEPTION 'Warga hanya dapat melaporkan tamu untuk rumahnya sendiri.' USING ERRCODE = '42501';
@@ -307,9 +307,9 @@ $$;
 -- BERANDA admin & warga (setelah login). Beranda tamu: fn_guest_home().
 -- =====================================================================
 CREATE FUNCTION fn_home() RETURNS jsonb LANGUAGE plpgsql STABLE AS $$
-DECLARE u users%ROWTYPE; v_unit jsonb; v_common jsonb; v_stats jsonb;
+DECLARE u record; v_unit jsonb; v_common jsonb; v_stats jsonb;
 BEGIN
-  SELECT * INTO u FROM users WHERE id = app_uid();
+  SELECT id, role, full_name, status, activated_at, unit_id, photo_storage_key INTO u FROM users WHERE id = app_uid();
   IF NOT FOUND OR u.status <> 'aktif' OR u.activated_at IS NULL THEN RETURN NULL; END IF;
   SELECT jsonb_build_object('block', b.name, 'house_number', un.house_number) INTO v_unit
     FROM units un JOIN blocks b ON b.id = un.block_id WHERE un.id = u.unit_id;

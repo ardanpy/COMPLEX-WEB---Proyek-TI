@@ -26,8 +26,7 @@ def code_hash(uid, purpose, code):
 def sha(t): return hashlib.sha256(t.encode()).digest()
 
 def lookup(email):
-    return app.execute("SELECT id, password_hash, status, locked_until > now(), activated_at, activation_expires_at > now(), role "
-                       "FROM users WHERE email=%s", (email,)).fetchone()
+    return app.execute("SELECT * FROM fn_login_lookup(%s)", (email,)).fetchone()
 
 def login(email, password, ip="10.0.0.5"):
     email = email.strip().lower()

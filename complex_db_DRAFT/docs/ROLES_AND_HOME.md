@@ -25,7 +25,7 @@ Aturan ditegakkan di DB (RLS, trigger, fungsi); backend tetap wajib mengecek, te
 Tamu **tidak punya `user_id`**, sehingga tidak lolos policy RLS mana pun. Satu-satunya jalan masuknya adalah lima fungsi publik (bagian 4). Role aplikasi tidak bisa membaca `guest_sessions`.
 
 ## 3. Lapor Tamu 1x24 jam
-Beranda tamu berisi **berita komplek** dan satu tombol utama **Lapor Tamu**. Pemetaan form:
+Tamu masuk dari **halaman login** lewat tombol "Masuk sebagai tamu" (bukan dari tombol Lapor Tamu). Beranda tamu berisi **berita komplek** dan satu tombol utama **Lapor Tamu**. Pemetaan form:
 | Isian form | Kolom | Catatan |
 |---|---|---|
 | Nama | `visitor_name` | wajib |
@@ -58,7 +58,8 @@ Catatan: batas per IP efektif hanya bila backend meneruskan **IP klien asli** (p
 ```
 Admin/warga:  POST /auth/login → (OTP bila perlu) → cookie sesi
               GET /home → fn_session_user(sha256(cookie)) → set_config('app.user_id', uid, true) → SELECT fn_home()
-Tamu:         POST /guest/start  → backend buat token acak 32 byte, simpan cookie guest_sid (HttpOnly, Secure, SameSite=Strict, Max-Age=86400)
+Halaman login punya 2 jalur: form email+password, dan tombol "Masuk sebagai tamu" (tanpa akun).
+Tamu:         klik "Masuk sebagai tamu" → POST /guest/start  → backend buat token acak 32 byte, simpan cookie guest_sid (HttpOnly, Secure, SameSite=Strict, Max-Age=86400)
                                    → fn_guest_session_start(sha256(token), ip, ua)
               GET  /guest/home   → fn_guest_home(sha256(token))
               POST /guest/report → fn_guest_report_create(...)
@@ -95,3 +96,6 @@ Payload tidak memuat email/hash. `landing` adalah kunci logis; frontend memetaka
 2. Tamu hanya melihat berita komplek, bukan acara atau pengumuman internal.
 3. Nomor rumah tujuan boleh tidak terdaftar (tetap tercatat, admin menilai).
 4. Pengumuman kategori `komplek` kini tampil ke siapa pun yang membuka sesi tamu: **pastikan isinya memang boleh publik**.
+
+## Peran security (PLAN)
+Rancangan peran satpam (login, absen foto, progres kasus) ada di `docs/plan/PLAN_SECURITY.md`; belum bagian dari migrasi utama.

@@ -1,9 +1,17 @@
 flowchart TD
   classDef adm fill:#e8eefc,stroke:#4a64b3,color:#1d2a5c
   classDef sys fill:#d9f2e3,stroke:#1f8a4c,color:#0b3d22
+  classDef plan fill:#efe7fb,stroke:#7b4fc9,stroke-dasharray:5 4,color:#2e1a5c
   classDef bad fill:#fde4e4,stroke:#b33a3a,color:#5c1d1d
 
-  A["Admin mendaftarkan akun WARGA<br/>(wajib rumah) · password sementara dibuat backend"]:::adm --> S0["Status: BELUM AKTIF<br/>(activated_at kosong, batas aktivasi 7 hari)"]:::sys
+  LG["HALAMAN LOGIN<br/>email + password · lupa password<br/>tombol Masuk sebagai tamu"]:::adm
+  LG -->|"akun belum aktif"| L1
+  LG -->|"akun sudah aktif"| N
+  LG -->|"lupa password"| FP
+  LG -->|"tombol Masuk sebagai tamu"| V
+
+  A["Admin mendaftarkan akun WARGA<br/>(wajib rumah) · password sementara dibuat backend"]:::adm --> S0
+  A2["PLAN: Admin mendaftarkan akun SECURITY<br/>(tanpa rumah) · alur aktivasi OTP sama persis"]:::plan --> S0["Status: BELUM AKTIF<br/>(activated_at kosong, batas aktivasi 7 hari)"]:::sys
 
   S0 --> L1["Login pertama: email + password sementara"]
   L1 -->|salah| X1["401 pesan generik<br/>hitung gagal · 5x = kunci 15 menit"]:::bad
@@ -24,7 +32,10 @@ flowchart TD
   R -->|admin| H1["beranda_admin<br/>statistik: laporan baru/diproses, fasilitas menunggu,<br/>SIGAP terbuka, iuran verifikasi, tamu aktif,<br/>akun belum aktif, notifikasi + pengumuman & acara"]
   R -->|warga| H2["beranda_warga<br/>notifikasi belum dibaca, laporan saya,<br/>fasilitas menunggu, iuran belum lunas,<br/>tamu di rumah saya + pengumuman & acara"]
 
-  V["Pengunjung (tanpa akun, tanpa admin)<br/>tombol Masuk sebagai tamu"]:::sys --> GS["Backend buat cookie guest_sid acak<br/>fn_guest_session_start · maks 20 sesi/IP/jam<br/>berlaku 24 jam"]:::sys --> H3["beranda_tamu<br/>berita komplek (kategori komplek saja)<br/>+ tombol utama LAPOR TAMU"]
+  R -->|"security (PLAN)"| H4["PLAN · beranda_security — fn_home_security<br/>status bertugas · kasus terbuka · SIGAP terbuka<br/>laporan keamanan baru · tamu aktif · notifikasi"]:::plan
+  H4 --> P1x["PLAN: absen masuk/pulang + FOTO<br/>kasus keamanan + progres · SIGAP<br/>(detail: PLAN_4_security_flow)"]:::plan
+
+  V["Tamu menekan tombol<br/>Masuk sebagai tamu (tanpa akun, tanpa admin)"]:::sys --> GS["Backend buat cookie guest_sid acak<br/>fn_guest_session_start · maks 20 sesi/IP/jam<br/>berlaku 24 jam"]:::sys --> H3["beranda_tamu<br/>berita komplek (kategori komplek saja)<br/>+ tombol utama LAPOR TAMU"]
   H3 --> G1["Form: nama · alamat · rumah tujuan<br/>· warga tujuan (opsional) · keperluan"]
   G1 --> G2["Laporan aktif tepat 24 jam (dihitung DB)<br/>admin + penghuni rumah tujuan dinotifikasi"]:::sys
   G2 --> G3["selesai / dibatalkan / otomatis tidak aktif setelah 24 jam<br/>perpanjang = buat laporan baru · maks 1 aktif per sesi · 3 laporan/IP/jam"]

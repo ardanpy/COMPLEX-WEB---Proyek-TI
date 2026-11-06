@@ -64,7 +64,7 @@ SELECT set_config('app.user_id', '<uuid-dari-sesi>', true), set_config('app.ip',
 
 ## 5. Verifikasi
 ```bash
-sudo -u postgres tests/run.sh        # 195 asersi SQL (DB sementara complex_test)
+sudo -u postgres tests/run.sh        # 214 asersi SQL (DB sementara complex_test)
 sudo -u postgres tests/run_sim.sh    # 55 asersi alur login/OTP (DB sementara complex_login)
 psql "$DATABASE_URL" -c "select current_user"   # harus: complex_app
 ```

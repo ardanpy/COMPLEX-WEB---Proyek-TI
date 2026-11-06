@@ -1,0 +1,31 @@
+erDiagram
+  %% PLAN — rancangan peran security (belum final)
+  users ||--o{ PLAN_security_attendance : "absen (role=security)"
+  users ||--o{ PLAN_security_cases : "membuat / ditugaskan"
+  PLAN_security_cases ||--o{ PLAN_security_case_updates : "linimasa progres (append-only)"
+  reports ||--o{ PLAN_security_cases : "sumber (opsional)"
+  sigap_alerts ||--o{ PLAN_security_cases : "sumber (opsional)"
+  security_guards |o--o| users : "PLAN: user_id (tautan slot petugas)"
+  PLAN_security_attendance { uuid id PK
+    uuid user_id FK
+    timestamptz check_in_at "waktu server"
+    text check_in_photo_key "wajib"
+    timestamptz check_out_at
+    text check_out_photo_key
+    text note
+  }
+  PLAN_security_cases { uuid id PK
+    text code "KS-2026-0001"
+    case_status status "baru|ditangani|menunggu_tindak_lanjut|selesai|ditutup"
+    text priority
+    uuid report_id FK "atau"
+    uuid sigap_id FK "salah satu"
+    uuid assigned_to FK "role security"
+  }
+  PLAN_security_case_updates { uuid id PK
+    uuid case_id FK
+    case_status new_status
+    text note
+    text photo_key
+    uuid created_by FK
+  }

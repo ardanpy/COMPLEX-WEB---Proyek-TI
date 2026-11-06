@@ -41,4 +41,4 @@ Ke klien semuanya diterjemahkan menjadi pesan generik (jangan bedakan "email tak
 6. Admin pertama dibuat lewat `scripts/create_admin.sh` oleh pemilik DB.
 
 ## Pengujian
-`tests/run.sh` (195 asersi SQL) dan `tests/run_sim.sh` (55 asersi alur backend + serangan). Sim selalu membuat DB baru karena mengubah data.
+`tests/run.sh` (214 asersi SQL) dan `tests/run_sim.sh` (55 asersi alur backend + serangan). Sim selalu membuat DB baru karena mengubah data.

@@ -1,0 +1,41 @@
+flowchart TD
+  classDef plan fill:#efe7fb,stroke:#7b4fc9,stroke-dasharray:5 4,color:#2e1a5c
+  classDef sys fill:#d9f2e3,stroke:#1f8a4c,color:#0b3d22
+  classDef bad fill:#fde4e4,stroke:#b33a3a,color:#5c1d1d
+  classDef adm fill:#e8eefc,stroke:#4a64b3,color:#1d2a5c
+
+  T["PLAN — peran SECURITY (satpam) · belum final"]:::plan
+  T --> A["Admin mendaftarkan akun security<br/>(tanpa rumah) · password sementara"]:::adm
+  A --> LG["Halaman login: email + password<br/>login pertama = OTP email (alur yang sama dengan warga)"]:::sys
+  LG --> H["beranda_security — fn_home_security()<br/>status bertugas · kasus terbuka · SIGAP terbuka<br/>laporan keamanan baru · notifikasi"]:::plan
+
+  H --> AB
+  H --> CS
+  H --> SG
+
+  subgraph AB["1) ABSEN DENGAN FOTO"]
+    direction TB
+    a1["Absen masuk + FOTO<br/>jam dari server"]:::plan --> a2(["bertugas (on_duty)"]):::plan --> a3["Absen pulang + FOTO<br/>jam dari server, tidak bisa diubah"]:::plan
+    a1 -.->|"sudah bertugas: ditolak"| a4["Tidak bisa absen masuk 2x"]:::bad
+  end
+
+  subgraph CS["2) KASUS KEAMANAN + PROGRES"]
+    direction TB
+    c0["Security membuka kasus<br/>(mandiri / dari laporan warga / dari SIGAP)"]:::plan --> c1([baru]):::plan
+    c1 --> c2([ditangani]):::plan
+    c2 <--> c3([menunggu_tindak_lanjut]):::plan
+    c2 --> c4([selesai]):::plan
+    c3 --> c4
+    c4 --> c5(["ditutup — HANYA admin"]):::sys
+    cn["Tiap perubahan = 1 pembaruan progres<br/>catatan + foto bukti · linimasa tidak bisa diubah/dihapus"]:::plan
+    cnotif["Admin dinotifikasi:<br/>kasus baru · kasus selesai"]:::sys
+  end
+
+  subgraph SG["3) SIGAP (darurat dari warga)"]
+    direction TB
+    s0["Warga menekan SIGAP"]:::adm --> s1["Security & admin dinotifikasi"]:::sys --> s2([diterima]):::plan --> s3([menuju_lokasi]):::plan --> s4([selesai]):::plan
+    s2 -.->|"warga dinotifikasi tiap perubahan status"| s5["Warga pengirim"]:::sys
+  end
+
+  X["Tidak diizinkan untuk security: membuat akun · mengubah status kasus langsung<br/>menutup kasus · melihat absen rekan · mengubah laporan warga/pengumuman"]:::bad
+  H -.-> X
