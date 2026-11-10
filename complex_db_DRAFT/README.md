@@ -40,7 +40,8 @@ Aplikasi **hanya** boleh terhubung sebagai `complex_app` (bukan superuser/pemili
 | `db/07_auth_otp.sql` | OTP email (aktivasi & lupa password), tiket sekali pakai, `activated_at`, fungsi DEFINER |
 | `db/dev/accounts_min.sql` | akun uji: admin, budi (aktif), sari (belum aktif → wajib OTP) |
 | `tests/login_sim.py`, `tests/run_sim.sh` | simulasi backend: login, OTP, lupa password, tamu anonim, beranda per peran, serangan — 55 asersi |
-| `docs/plan/PLAN_SECURITY.md`, `db/plan/PLAN_10_security_role.sql`, `tests/plan/*`, `docs/overview/PLAN_4_security_flow.*` | **PLAN** peran security (absen foto, kasus & progres); tidak dimuat migrate.sh; 53 tes sendiri (`tests/plan/run_plan.sh`) |
+| `db/10_security_role.sql`, `11_login_definer_fix.sql`, `12_security_report_status.sql`, `db/optional/` | **role security final** (absen foto, laporan warga + ubah status), perbaikan kunci akun, pengetatan hak per role; kasus/SIGAP opsional. Dok: `docs/SECURITY_ROLE.md`; tes: `tests/run_security.sh` |
+| `backend/` | API referensi Node/Fastify + `docs/API.md` (tim memutuskan Laravel; lihat `backend/NOTE_FRAMEWORK.md`) |
 | `docs/overview/*.png` (+ `.mmd`) | gambar ikhtisar: arsitektur sudah/belum, alur akun-login-beranda, alur status tiap fitur |
 | `docs/ROLES_AND_HOME.md` | peran admin/warga/tamu, matriks hak, kontrak beranda, aturan Lapor Tamu & anti-spam |
 | `docs/TESTING.md`, `requirements-dev.txt` | cara menjalankan & menambah tes di lokal |

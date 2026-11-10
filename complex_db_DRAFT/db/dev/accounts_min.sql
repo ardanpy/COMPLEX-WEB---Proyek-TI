@@ -21,3 +21,8 @@ INSERT INTO users (id, email, full_name, phone, unit_id, password_hash, activate
  ('00000000-0000-0000-0000-0000000000b2', 'sari@complex.test', 'Sari Wulandari', '6281200000002',
     (SELECT u.id FROM units u JOIN blocks b ON b.id = u.block_id WHERE b.name = 'Jati 2' AND u.house_number = '15'),
     '$argon2id$v=19$m=19456,t=2,p=1$Zza1w9fEWJjheh9Omm84KA$JcNjRdIBHrdke+eNtW8rPZK5+PCrM5oPTqpozoB7/gY', NULL, '00000000-0000-0000-0000-0000000000a1');
+
+-- satpam@complex.test  security  sudah aktif (password sama) -> uji absen foto & ubah status laporan
+INSERT INTO users (id, email, full_name, phone, role, password_hash, activated_at, created_by) VALUES
+ ('00000000-0000-0000-0000-0000000000e1', 'satpam@complex.test', 'Satpam Contoh', '6281300000001', 'security',
+  '$argon2id$v=19$m=19456,t=2,p=1$b3J+B8yFWAP1hlwY2vLTyg$J2upnmKOyh9N8kr/lgw+UchTKHIj5wT0+9OIZaS4S1E', now(), '00000000-0000-0000-0000-0000000000a1');
