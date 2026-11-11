@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Memasang skema ke database kosong. Jalankan sebagai pemilik/superuser database.
-#   DB=complex ./scripts/migrate.sh              # skema final 01-12 (termasuk role security) + data awal wajib
+#   DB=complex ./scripts/migrate.sh              # skema final 01-13 (termasuk role security) + data awal wajib
 #   DB=complex DEV=1 ./scripts/migrate.sh        # + data demo lengkap (JANGAN di produksi)
 #   DB=complex DEV=accounts ./scripts/migrate.sh # + hanya 1 admin & 2 warga untuk uji login
 #   DB=complex CASES=1 ./scripts/migrate.sh      # + kasus keamanan/SIGAP untuk security (OPSIONAL, di luar cakupan final)
 set -euo pipefail
 DB="${DB:-complex}"; DIR="$(cd "$(dirname "$0")/../db" && pwd)"
-for f in 01_extensions_roles 02_schema 03_security 04_rls 05_seed 06_user_photo 07_auth_otp 08_guest_session 09_gap_fixes 10_security_role 11_login_definer_fix 12_security_report_status; do
+for f in 01_extensions_roles 02_schema 03_security 04_rls 05_seed 06_user_photo 07_auth_otp 08_guest_session 09_gap_fixes 10_security_role 11_login_definer_fix 12_security_report_status 13_report_visibility; do
   echo ">> $f"; psql -d "$DB" -q -v ON_ERROR_STOP=1 -f "$DIR/$f.sql"
 done
 if [ "${CASES:-0}" = "1" ]; then echo ">> optional/10b_security_cases"; psql -d "$DB" -q -v ON_ERROR_STOP=1 -f "$DIR/optional/10b_security_cases.sql"; fi

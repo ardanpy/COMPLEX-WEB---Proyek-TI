@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Jalankan Tes COMPLEX
+Comment=Nyalakan database (Docker) lalu jalankan semua tes
+Exec=bash -c 'cd "$(dirname "$1")" && ./scripts/uji_semua.sh' _ %k
+Terminal=true
+Icon=utilities-terminal
+Categories=Development;

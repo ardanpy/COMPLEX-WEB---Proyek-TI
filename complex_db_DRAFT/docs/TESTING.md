@@ -70,3 +70,9 @@ Catatan penting:
 | `connection refused` | server belum hidup: `docker compose up -d` / `brew services start postgresql@16` / `sudo pg_ctlcluster 16 main start` |
 | `database "complex_test" is being accessed by other users` | tutup sesi psql/GUI yang membuka DB itu |
 | Simulasi gagal di "warga aktif login" | DB tidak segar (sudah pernah dijalankan); gunakan `run_sim.sh`, bukan `login_sim.py` langsung |
+
+## 6. Cara klik-saja (Linux desktop)
+`./scripts/uji_semua.sh` atau klik dua kali `Jalankan-Tes-COMPLEX.desktop` (pertama kali: klik kanan -> *Allow Launching* / *Izinkan dijalankan*).
+Menyalakan PostgreSQL via Docker, menyiapkan venv Python, menjalankan tes skema, login, dan security, lalu menyimpan hasil di `hasil-tes/`
+(`...-BARIS-GAGAL.txt` berisi hanya baris yang gagal). Prasyarat satu kali: `sudo pacman -S docker docker-compose postgresql python`,
+`sudo systemctl enable --now docker`, `sudo usermod -aG docker $USER` lalu logout/login.

@@ -149,6 +149,33 @@ SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000b1',false);
 SELECT t.assert((SELECT count(*) FROM v_community_members WHERE role::text = 'security') = 0 AND (SELECT count(*) FROM v_community_members) > 0, 'warga melihat anggota, tanpa akun security');
 RESET ROLE; RESET app.user_id;
 
+\echo '=== P3c. Visibilitas laporan & log (13) ==='
+RESET ROLE; RESET app.user_id;
+SELECT count(*) AS n_all FROM reports \gset
+SELECT count(*) AS n_mine FROM reports WHERE reporter_id = :'rep_user' \gset
+SELECT count(*) AS n_other FROM reports WHERE reporter_id <> :'rep_user' \gset
+SELECT t.assert(:n_mine > 0 AND :n_other > 0, 'data demo: ada laporan milik pelapor dan milik orang lain');
+SET ROLE complex_app;
+SELECT set_config('app.user_id', :'rep_user', false);
+SELECT t.assert((SELECT count(*) FROM reports) = :n_mine AND (SELECT count(*) FROM reports WHERE reporter_id <> :'rep_user') = 0, 'warga hanya membaca laporannya sendiri');
+SELECT t.assert((SELECT count(*) FROM report_status_history) = 0, 'warga tidak membaca log riwayat (admin saja)');
+SELECT t.assert((SELECT count(*) FROM audit_logs) = 0, 'warga tidak membaca audit log');
+SELECT t.assert(jsonb_array_length(fn_my_report_progress(:'rid')) >= 2, 'warga melihat progres laporan sendiri (urutan status + waktu)');
+SELECT t.assert(NOT (fn_my_report_progress(:'rid')::text ~ 'note|changed_by|actor|Satpam'), 'progres tanpa pelaku dan tanpa catatan internal');
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000e1',false);
+SELECT t.assert((SELECT count(*) FROM reports) = :n_all, 'satpam membaca semua laporan');
+SELECT t.assert((SELECT count(*) FROM report_status_history) = 0 AND (SELECT count(*) FROM audit_logs) = 0, 'satpam tidak membaca log (admin saja)');
+SELECT t.assert(jsonb_array_length(fn_my_report_progress(:'rid')) = 0, 'satpam bukan pelapor: progres kosong');
+SELECT set_config('app.user_id','00000000-0000-0000-0000-0000000000a1',false);
+SELECT t.assert((SELECT count(*) FROM reports) = :n_all AND (SELECT count(*) FROM report_status_history) > 0 AND (SELECT count(*) FROM audit_logs) > 0, 'admin membaca semua laporan dan seluruh log');
+RESET ROLE;
+SELECT id AS other_user FROM users WHERE role = 'warga' AND id <> :'rep_user' AND id IN (SELECT reporter_id FROM reports) LIMIT 1 \gset
+SET ROLE complex_app;
+SELECT set_config('app.user_id', :'other_user', false);
+SELECT t.assert(jsonb_array_length(fn_my_report_progress(:'rid')) = 0, 'warga lain tidak bisa melihat progres laporan orang');
+SELECT t.assert((SELECT count(*) FROM reports WHERE id = :'rid') = 0, 'warga lain tidak bisa membaca laporan orang');
+RESET ROLE; RESET app.user_id;
+
 \echo '=== P4. Integrasi tambahan (tamu & slot petugas) ==='
 RESET ROLE; RESET app.user_id;
 SELECT t.assert((SELECT count(*) FROM pg_policies WHERE tablename='guest_visits' AND policyname='gv_sel' AND qual LIKE '%app_is_security%')=1, 'policy gv_sel mencakup security');

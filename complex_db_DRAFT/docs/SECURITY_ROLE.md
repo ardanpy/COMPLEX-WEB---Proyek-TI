@@ -3,6 +3,13 @@
 Status: final untuk cakupan di bawah. Rancangan awal (kasus keamanan, SIGAP) disimpan di `db/optional/10b_security_cases.sql`;
 catatan lama di `docs/SECURITY_ROLE_OLD_PLAN.md`.
 
+## Visibilitas laporan (migrasi 13)
+| Role | Laporan | Log (riwayat status, audit) |
+|---|---|---|
+| Admin | semua | semua |
+| Satpam | semua (+ ubah status) | tidak |
+| Warga | hanya miliknya; buat laporan | tidak; progres lewat status laporan sendiri dan `fn_my_report_progress(id)` |
+
 ## Fitur satpam
 | Menu | Isi | Endpoint |
 |---|---|---|

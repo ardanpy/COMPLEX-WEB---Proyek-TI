@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Tes role security (final): migrasi 01-12 + data demo pada DB sementara, lalu tests/test_security_role.sql. Jalankan sebagai superuser.
+# Tes role security (final): migrasi 01-13 + data demo pada DB sementara, lalu tests/test_security_role.sql. Jalankan sebagai superuser.
 set -uo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"; DB="${DB:-complex_sec}"
 dropdb --if-exists "$DB" >/dev/null 2>&1; createdb "$DB"
